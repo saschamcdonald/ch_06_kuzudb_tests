@@ -1,0 +1,12 @@
+prettytable
+pyarrow
+python-dotenv
+tqdm
+paramiko
+pandas
+networkx
+kuzu
+boto3
+openai
+faker
+numpy
