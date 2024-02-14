@@ -1,8 +1,9 @@
 
 import sys
 import os
+import test_create_test_data as test_create_test_data
+import test_ingress_load_kuzudb as test_ingress_load_kuzudb
 
-# Add the directory above 'src' to the Python path
 # to make sure that all packages inside 'src' can be found by Python
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -10,10 +11,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def main():
-    # Generate the .env file
-    print("Generating .env file...")
-    config_generate_env.main()
-    print("Finished generating .env file.")
+    # Generate test data
+    # print("Generating test data...")
+    # test_create_test_data.main()
+    # print("Finished generating test data.")
+    
+    # Generate test data
+    print("Create and load Kuzu test data...")
+    test_ingress_load_kuzudb.main()
+    print("Game Over...")
 
 
 

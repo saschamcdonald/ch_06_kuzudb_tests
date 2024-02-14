@@ -53,7 +53,9 @@ Activate your virtual environment and set up your project dependencies:
 ```bash
 pyenv activate dc-kuzu-test-gen
 pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
+pip install pip-tools
+pip-compile --upgrade
+pip install --no-cache-dir -r requirements.txt
 ```
 
 ### 4. Run the Data Engineering Pipeline

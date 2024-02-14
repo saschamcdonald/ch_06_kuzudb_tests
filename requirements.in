@@ -1,12 +1,9 @@
+kuzu==0.0.11
 prettytable
 pyarrow
 python-dotenv
 tqdm
 paramiko
 pandas
-networkx
-kuzu
-boto3
-openai
 faker
 numpy
