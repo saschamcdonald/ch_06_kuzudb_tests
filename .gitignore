@@ -1,10 +1,9 @@
 *.pyc
 __pycache__/
 FILE*
-test_data/*
+data/*
 prod_data/*
 .DS_Store
-.env
 .idea/*
 */Databases/*
 */logs/*
@@ -14,5 +13,6 @@ prod_data/*
 */utils/kuzu*
 */data.zip
 */data/*
+requirements-*.txt
 
 
