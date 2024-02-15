@@ -14,7 +14,8 @@ prod_data/*
 */data.zip
 */data/*
 requirements-*.txt
-*.code-workspace
+ch_06_kuzudb_tests.code-workspace
+
 
 
 
