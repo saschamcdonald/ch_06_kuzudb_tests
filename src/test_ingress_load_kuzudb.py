@@ -29,12 +29,18 @@ def import_table_data(conn, copy_statement, table_name):
     try:
         conn.execute(copy_statement)
         end_time = time.time()
-        duration = end_time - start_time
-        logging.info(f'Imported data into "{table_name}" Node Table in {duration:.2f} seconds.')
-        return duration
+        duration_seconds = end_time - start_time
+        logging.info(f'Imported data into "{table_name}" Node Table in {duration_seconds:.2f} seconds.')
+        return duration_seconds
     except RuntimeError as e:
         logging.error(f"Failed to import data into {table_name} Node Table. Error details: {e}")
         return None
+
+def format_duration(seconds):
+    """Formats the duration from seconds to minutes and seconds for readability."""
+    minutes = seconds // 60
+    seconds = seconds % 60
+    return f"{int(minutes)}m {int(seconds)}s"
 
 
 def create_node_table_statement_from_parquet(parquet_path, table_name, primary_key):
@@ -170,7 +176,7 @@ def main():
     for table_name, duration in load_times:
         load_times_table.add_row([table_name, f"{duration:.2f}"])
 
-    logging.info(f"\n{load_times_table}")
+    logging.info(f"Kuzu loaded time counts:\n {load_times_table}")
 
   # Execute queries and display results
     count_table = PrettyTable()
