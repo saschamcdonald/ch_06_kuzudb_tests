@@ -14,5 +14,7 @@ prod_data/*
 */data.zip
 */data/*
 requirements-*.txt
+*.code-workspace
+
 
 
