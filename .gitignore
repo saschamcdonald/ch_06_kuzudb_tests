@@ -15,7 +15,7 @@ prod_data/*
 */data/*
 requirements-*.txt
 ch_06_kuzudb_tests.code-workspace
-
+.vscode
 
 
 
