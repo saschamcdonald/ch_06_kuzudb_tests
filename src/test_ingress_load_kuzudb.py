@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import logging
 import pyarrow.parquet as pq
 import kuzu
@@ -21,14 +22,20 @@ def ensure_directories_exist(directories):
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
 
-def measure_time(func):
-    """Decorator to measure the duration of a function call."""
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
+
+def import_table_data(conn, copy_statement, table_name):
+    """Executes a COPY statement to import data into a table and measures the time taken."""
+    start_time = time.time()
+    try:
+        conn.execute(copy_statement)
         end_time = time.time()
-        return result, end_time - start_time
-    return wrapper
+        duration = end_time - start_time
+        logging.info(f'Imported data into "{table_name}" Node Table in {duration:.2f} seconds.')
+        return duration
+    except RuntimeError as e:
+        logging.error(f"Failed to import data into {table_name} Node Table. Error details: {e}")
+        return None
+
 
 def create_node_table_statement_from_parquet(parquet_path, table_name, primary_key):
     try:
@@ -141,29 +148,29 @@ def main():
         except Exception as e:
             logging.error(f"Failed to execute statement. Error details: {e}")
 
-    
-    try:
-        conn.execute(
-            f'COPY Person  FROM "{PERSON_PARQUET_PATH}" (HEADER = true)')
-        logging.info(f'Imported persons data into "Person" Node Table.')
-    except RuntimeError as e:
-        logging.info(
-            f"Failed to import persons data into Person Node Table. Error details: {e}")
-    try:
-        conn.execute(
-            f'COPY Company FROM "{COMPANY_PARQUET_PATH}" (HEADER = true)')
-        logging.info('Imported data into "Company" Node Table.')
-    except RuntimeError as e:
-        logging.info(
-            f"Failed to import data into Company node table. Error details: {e}")
+        # Assuming conn is your database connection object
+    load_times = []
+    table_names = ["Person", "Company", "WORkS_AT"]
+    parquet_paths = {
+        "Person": os.path.join(TEST_DATA_PATH, 'persons.parquet'),
+        "Company": os.path.join(TEST_DATA_PATH, 'companies.parquet'),
+        "WORkS_AT": os.path.join(TEST_DATA_PATH, 'relationships.parquet')
+    }
 
-    try:
-        conn.execute(
-            f'COPY WORkS_AT FROM "{RELATIONSHIP_PARQUET_PATH}" (HEADER = true)')
-        logging.info('Imported data into "WORkS_AT" Relationship Table.\n')
-    except RuntimeError as e:
-        logging.info(
-            f"Failed to import data into WORkS_AT relationship table. Error details: {e}")
+    for table_name in table_names:
+        duration = import_table_data(conn, f'COPY {table_name} FROM "{parquet_paths[table_name]}" (HEADER = true)', table_name)
+        if duration is not None:
+            load_times.append((table_name, duration))
+
+    # Displaying load times in a PrettyTable
+    load_times_table = PrettyTable()
+    load_times_table.title = f"Load Times for {DATABASE_NAME}"
+    load_times_table.field_names = ["Table Name", "Load Time (Seconds)"]
+
+    for table_name, duration in load_times:
+        load_times_table.add_row([table_name, f"{duration:.2f}"])
+
+    logging.info(f"\n{load_times_table}")
 
   # Execute queries and display results
     count_table = PrettyTable()
