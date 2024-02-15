@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 import pyarrow.parquet as pq
 import kuzu
@@ -20,50 +21,44 @@ def ensure_directories_exist(directories):
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
 
+def measure_time(func):
+    """Decorator to measure the duration of a function call."""
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        return result, end_time - start_time
+    return wrapper
 
 def create_node_table_statement_from_parquet(parquet_path, table_name, primary_key):
-    """Generate a CREATE NODE TABLE statement for KuzuDB based on a Parquet file schema."""
-    table = pq.read_table(parquet_path)
-    schema = table.schema
+    try:
+        table = pq.read_table(parquet_path)
+        schema = table.schema
 
-    columns = []
-    for field in schema:
-        column_name = field.name
-        column_type = "STRING"  # Assuming all columns default to STRING type
-        columns.append(f"{column_name} {column_type}")
+        columns = [f"{field.name} STRING" for field in schema]
+        primaryKeyStatement = f", PRIMARY KEY ({primary_key})" if primary_key else ""
+        create_statement = f"CREATE NODE TABLE {table_name} ({', '.join(columns)}{primaryKeyStatement});"
 
-    column_definitions = ",\n".join(columns)
-    primaryKeyStatement = f",\nPRIMARY KEY ({primary_key})" if primary_key else ""
-
-    create_statement = f"CREATE NODE TABLE {table_name} (\n{column_definitions}{primaryKeyStatement}\n);"
-    print(f'create_statement:{create_statement}')
-    return create_statement
+        logging.debug(f'CREATE statement for {table_name}: {create_statement}')
+        return create_statement
+    except Exception as e:
+        logging.error(f"Failed to generate CREATE statement for {table_name}: {e}")
+        return None
 
 
 def create_rel_table_statement_from_parquet(parquet_path, table_name):
-    """Generate a CREATE REL TABLE statement for KuzuDB, specifically for the WORkS_AT relationship table."""
-    table = pq.read_table(parquet_path)
-    schema = table.schema
+    try:
+        table = pq.read_table(parquet_path)
+        schema = table.schema
 
-    # Prepare dynamic columns, excluding predefined ones
-    dynamic_columns = []
-    for field in schema:
-        column_name = field.name
-        # Exclude predefined columns
-        if column_name not in ['person_id', 'company_id', 'id']:
-            column_type = "STRING"  # Default to STRING type for simplicity
-            dynamic_columns.append(f"{column_name} {column_type}")
+        dynamic_columns = [f"{field.name} STRING" for field in schema if field.name not in ['person_id', 'company_id', 'id']]
+        create_statement = f"CREATE REL TABLE {table_name} (FROM Person TO Company, {', '.join(dynamic_columns)});"
 
-    dynamic_column_definitions = ",\n".join(dynamic_columns)
-
-    # Formulating the CREATE REL TABLE statement according to the specified format
-    
-    create_statement = f"""CREATE REL TABLE {table_name} (
-FROM Person TO Company,
-{dynamic_column_definitions}
-);"""
-    print(f'create_statement:{create_statement}')
-    return create_statement
+        logging.debug(f'CREATE statement for {table_name}: {create_statement}')
+        return create_statement
+    except Exception as e:
+        logging.error(f"Failed to generate CREATE statement for {table_name}: {e}")
+        return None
 
 
 def execute_query_and_display(conn, query):
@@ -86,9 +81,6 @@ def execute_query_and_display(conn, query):
 
 def main():
     setup_logging()
-
-
-
     # Get the environment variable for the test data path
     TEST_DATA_PATH = os.getenv('TEST_DATA_PATH')
 
@@ -112,12 +104,16 @@ def main():
     logging.info("Starting KuzuDB processing...")
 
     # Initialize KuzuDB connection
-    db = kuzu.Database(os.path.join(DATABASE_DIR, DATABASE_NAME))
-    conn = kuzu.Connection(db)
+    try:
+        db = kuzu.Database(os.path.join(DATABASE_DIR, DATABASE_NAME))
+        conn = kuzu.Connection(db)
+    except Exception as e:
+        logging.error(f"Failed to initialize KuzuDB connection: {e}")
+        sys.exit(1)  # Exit if database connection cannot be established
 
     # Drop existing tables if required
     if DROP_TABLES:
-        for table_name in tqdm(["WORkS_AT", "Company", "Person"], desc="Dropping tables"):
+        for table_name in ["WORkS_AT", "Company", "Person"]:
             try:
                 conn.execute(f"DROP TABLE {table_name}")
                 logging.info(f"Table {table_name} dropped.")
@@ -125,7 +121,7 @@ def main():
                 # Check for a specific exception indicating the table doesn't exist
                 # This is a generic approach; adjust based on your DB's API
                 if 'does not exist' in str(e).lower():
-                    logging.info(
+                    logging.debug(
                         f"Table {table_name} does not exist. No need to drop.")
                 else:
                     logging.error(f"Error dropping table {table_name}: {e}")
@@ -141,7 +137,7 @@ def main():
     for statement in [create_statement_company, create_statement_person, create_statement_relationship]:
         try:
             conn.execute(statement)
-            logging.info(f'Successfully executed: {statement.split()[2]}')
+            logging.info(f'Successfully created kuzu table: {statement.split()[3]}')
         except Exception as e:
             logging.error(f"Failed to execute statement. Error details: {e}")
 
@@ -164,14 +160,17 @@ def main():
     try:
         conn.execute(
             f'COPY WORkS_AT FROM "{RELATIONSHIP_PARQUET_PATH}" (HEADER = true)')
-        logging.info('Imported data into "WORkS_AT" Relationship Table.')
+        logging.info('Imported data into "WORkS_AT" Relationship Table.\n')
     except RuntimeError as e:
         logging.info(
             f"Failed to import data into WORkS_AT relationship table. Error details: {e}")
 
   # Execute queries and display results
     count_table = PrettyTable()
-    count_table.field_names = ["Label", "Node Count", "Relationship Count"]
+    count_table.title = f"Database Summary for {DATABASE_NAME}"
+    count_table.field_names = ["Entity", "Node Count", "Relationship Count"]
+    
+    
     company_node_count = conn.execute(
         'MATCH (n:Company) RETURN COUNT(n) AS CompanyNodeCount;').get_next()[0]
     person_node_count = conn.execute(
@@ -187,7 +186,7 @@ def main():
     count_table.add_row(["Company", formatted_company_node_count, "-"])
     count_table.add_row(["Person", formatted_person_node_count, "-"])
     count_table.add_row(["-", "-", formatted_WORkS_AT_rel_count])
-    logging.info(count_table)
+    logging.info(f"Kuzu loaded query counts:\n {count_table}")
 
 
     print("Processing completed.")
