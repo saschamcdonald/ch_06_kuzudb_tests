@@ -37,6 +37,7 @@ The `.env` file allows you to customize the behavior of the test data generation
 
  `.env` content (the following defaults offer the error between the versions):
 
+
 ```bash
 # Base path for test data storage
 TEST_DATA_PATH=./data
@@ -50,7 +51,7 @@ NUM_DYNAMIC_COMPANY_COLUMNS=5 # Dynamic Property columns STRING for companies, d
 NUM_DYNAMIC_PERSON_COLUMNS=5 # Dynamic Property columns STRING for persons, default settings
 NUM_DYNAMIC_RELATIONSHIP_COLUMNS=5 # Dynamic Property columns STRING for relationships, default settings
 
-``
+```
 
 
 # Getting Started
