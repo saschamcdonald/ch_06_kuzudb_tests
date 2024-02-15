@@ -3,6 +3,10 @@ import logging
 import pyarrow.parquet as pq
 import kuzu
 from prettytable import PrettyTable
+from importlib.metadata import version  # For Python 3.8 and newer
+from tqdm import tqdm
+
+
 
 
 def setup_logging():
@@ -37,7 +41,7 @@ def create_node_table_statement_from_parquet(parquet_path, table_name, primary_k
 
 
 def create_rel_table_statement_from_parquet(parquet_path, table_name):
-    """Generate a CREATE REL TABLE statement for KuzuDB, specifically for the IS_OFFICER relationship table."""
+    """Generate a CREATE REL TABLE statement for KuzuDB, specifically for the WORkS_AT relationship table."""
     table = pq.read_table(parquet_path)
     schema = table.schema
 
@@ -83,22 +87,26 @@ def execute_query_and_display(conn, query):
 def main():
     setup_logging()
 
-    # Paths and database configurations
-    # DATABASE_DIR = '/path/to/Database'
-    # DATABASE_NAME = 'test_kuzu_db'
-    # DROP_TABLES = True
 
-    # COMPANY_PARQUET_PATH = '/path/to/companies.parquet'
-    # PERSON_PARQUET_PATH = '/path/to/persons.parquet'
-    # RELATIONSHIP_PARQUET_PATH = '/path/to/relationships.parquet'
 
-    DATABASE_DIR = '/Volumes/G-DRIVE/test_data/Database'
-    DATABASE_NAME = 'test_kuzu_db'
+    # Get the environment variable for the test data path
+    TEST_DATA_PATH = os.getenv('TEST_DATA_PATH')
+
+    # Dynamically get the version of kuzu
+    kuzu_version = version("kuzu")
+
+    # Construct the database name dynamically based on the kuzu version
+    DATABASE_NAME = f'test_kuzu_db_v{kuzu_version.replace(".", "_")}'
+    DATABASE_DIR = os.path.join(TEST_DATA_PATH, DATABASE_NAME)
+
     DROP_TABLES = True
 
-    COMPANY_PARQUET_PATH = '/Volumes/G-DRIVE/test_data/companies.parquet'
-    PERSON_PARQUET_PATH = '/Volumes/G-DRIVE/test_data/persons.parquet'
-    RELATIONSHIP_PARQUET_PATH = '/Volumes/G-DRIVE/test_data/relationships.parquet'
+    # Parquet file paths
+    COMPANY_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'companies.parquet')
+    PERSON_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'persons.parquet')
+    RELATIONSHIP_PARQUET_PATH = os.path.join(
+        TEST_DATA_PATH, 'relationships.parquet')
+
 
     ensure_directories_exist([DATABASE_DIR])
     logging.info("Starting KuzuDB processing...")
@@ -109,20 +117,26 @@ def main():
 
     # Drop existing tables if required
     if DROP_TABLES:
-        for table_name in ["IS_OFFICER", "Company", "Person"]:
+        for table_name in tqdm(["WORkS_AT", "Company", "Person"], desc="Dropping tables"):
             try:
                 conn.execute(f"DROP TABLE {table_name}")
-                logging.info(f'Dropped table "{table_name}" if it existed.')
+                logging.info(f"Table {table_name} dropped.")
             except Exception as e:
-                logging.error(f"Error while dropping table {table_name}: {e}")
+                # Check for a specific exception indicating the table doesn't exist
+                # This is a generic approach; adjust based on your DB's API
+                if 'does not exist' in str(e).lower():
+                    logging.info(
+                        f"Table {table_name} does not exist. No need to drop.")
+                else:
+                    logging.error(f"Error dropping table {table_name}: {e}")
 
-    # Create Company and Person node tables, and IS_OFFICER relationship table
+    # Create Company and Person node tables, and WORkS_AT relationship table
     create_statement_company = create_node_table_statement_from_parquet(
         COMPANY_PARQUET_PATH, "Company", "company_id")
     create_statement_person = create_node_table_statement_from_parquet(
         PERSON_PARQUET_PATH, "Person", "person_id")
     create_statement_relationship = create_rel_table_statement_from_parquet(
-        RELATIONSHIP_PARQUET_PATH, "IS_OFFICER")
+        RELATIONSHIP_PARQUET_PATH, "WORkS_AT")
 
     for statement in [create_statement_company, create_statement_person, create_statement_relationship]:
         try:
@@ -131,8 +145,6 @@ def main():
         except Exception as e:
             logging.error(f"Failed to execute statement. Error details: {e}")
 
-    logging.info("KuzuDB processing completed.")
-    
     
     try:
         conn.execute(
@@ -151,11 +163,11 @@ def main():
 
     try:
         conn.execute(
-            f'COPY IS_OFFICER FROM "{RELATIONSHIP_PARQUET_PATH}" (HEADER = true)')
-        logging.info('Imported data into "IS_OFFICER" Relationship Table.')
+            f'COPY WORkS_AT FROM "{RELATIONSHIP_PARQUET_PATH}" (HEADER = true)')
+        logging.info('Imported data into "WORkS_AT" Relationship Table.')
     except RuntimeError as e:
         logging.info(
-            f"Failed to import data into IS_OFFICER relationship table. Error details: {e}")
+            f"Failed to import data into WORkS_AT relationship table. Error details: {e}")
 
   # Execute queries and display results
     count_table = PrettyTable()
@@ -164,17 +176,17 @@ def main():
         'MATCH (n:Company) RETURN COUNT(n) AS CompanyNodeCount;').get_next()[0]
     person_node_count = conn.execute(
         'MATCH (n:Person) RETURN COUNT(n) AS PersonNodeCount;').get_next()[0]
-    is_officer_rel_count = conn.execute(
-        'MATCH ()-[r:IS_OFFICER]-() RETURN COUNT(r) AS RelationshipCount;').get_next()[0]
+    WORkS_AT_rel_count = conn.execute(
+        'MATCH ()-[r:WORkS_AT]-() RETURN COUNT(r) AS RelationshipCount;').get_next()[0]
 
     # Formatting numbers with commas
     formatted_company_node_count = format(company_node_count, ',')
     formatted_person_node_count = format(person_node_count, ',')
-    formatted_is_officer_rel_count = format(is_officer_rel_count, ',')
+    formatted_WORkS_AT_rel_count = format(WORkS_AT_rel_count, ',')
 
     count_table.add_row(["Company", formatted_company_node_count, "-"])
     count_table.add_row(["Person", formatted_person_node_count, "-"])
-    count_table.add_row(["-", "-", formatted_is_officer_rel_count])
+    count_table.add_row(["-", "-", formatted_WORkS_AT_rel_count])
     logging.info(count_table)
 
 

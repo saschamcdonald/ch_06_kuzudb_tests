@@ -12,9 +12,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def main():
     # Generate test data
-    # print("Generating test data...")
-    # test_create_test_data.main()
-    # print("Finished generating test data.")
+    print("Generating test data...")
+    test_create_test_data.main()
+    print("Finished generating test data.")
     
     # Generate test data
     print("Create and load Kuzu test data...")

@@ -1,75 +1,97 @@
-# Datacue-Kuzu: Test Data and Bulk Load Generator
+```markdown
+# Getting Started with Your Python Project
 
-Welcome to Datacue-Kuzu, your go-to solution for generating test data and managing bulk data loading efficiently. This guide will help you get started with setting up your environment and running the Data Engineering Pipeline.
+Welcome to your Python project setup guide. This README provides a comprehensive walkthrough for setting up your Python environment, managing virtual environments, and handling project dependencies with ease.
 
 ## Prerequisites
 
-Before you begin, ensure you have `pyenv` installed to manage your Python versions effectively. If you need assistance installing `pyenv`, refer to the [Fathomtech blog post on Python environments with pyenv and virtualenv](https://fathomtech.io/blog/python-environments-with-pyenv-and-vitualenv/).
+Before you start, you need to have `pyenv` installed on your machine. For a detailed guide on installing `pyenv` and setting up Python environments, refer to the [Fathomtech blog post on Python environments with pyenv and virtualenv](https://fathomtech.io/blog/python-environments-with-pyenv-and-vitualenv/).
 
-## Installation Guide
+## Installation and Setup
 
-Follow these steps to set up your environment:
+### Installing Python
 
-### 1. Install Python
-
-Install the required Python version using `pyenv`:
+Start by installing the required Python version using `pyenv`:
 
 ```bash
 pyenv install 3.11.6
 ```
 
-### 2. Install and Configure pyenv-virtualenv
+### Creating a Virtual Environment
 
-To manage virtual environments, you'll need `pyenv-virtualenv`. If it's not already installed, follow these steps:
+After installing the desired Python version, you can create a virtual environment to isolate your project dependencies. Follow these steps if you haven't already installed the `pyenv-virtualenv` plugin:
 
-- **Install `pyenv-virtualenv` Plugin:**
+1. **Install the `pyenv-virtualenv` Plugin:**
 
-  Clone the `pyenv-virtualenv` repository into the `pyenv` plugins directory:
+   Clone the plugin into the `pyenv` plugins directory:
 
-  ```bash
-  git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
-  ```
+   ```bash
+   git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+   ```
 
-- **Configure Shell:**
+2. **Configure Your Shell:**
 
-  Add `pyenv virtualenv-init` to your shell startup file (e.g., `~/.bashrc`, `~/.zshrc`):
+   Add `pyenv virtualenv-init` to your shell's startup script:
 
-  ```bash
-  eval "$(pyenv virtualenv-init -)"
-  ```
+   ```bash
+   echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+   ```
 
-  Restart your shell or source your startup file to apply the changes.
+   Restart your shell or source your profile to apply the changes:
 
-- **Create a Virtual Environment:**
+   ```bash
+   source ~/.bashrc
+   ```
 
-  ```bash
-  pyenv virtualenv 3.11.6 dc-kuzu-test-gen
-  ```
+3. **Create and Activate Virtual Environment:**
 
-### 3. Activate the Virtual Environment and Install Dependencies
+   - For version 0.1.1:
 
-Activate your virtual environment and set up your project dependencies:
+     ```bash
+     pyenv virtualenv 3.11.6 dc-kuzu-0-1-1
+     pyenv activate dc-kuzu-0-1-1
+     ```
 
-```bash
-pyenv activate dc-kuzu-test-gen
-pip install --upgrade pip setuptools wheel
-pip install pip-tools
-pip-compile --upgrade
-pip install --no-cache-dir -r requirements.txt
-```
+   - For version 0.2.0:
 
-### 4. Run the Data Engineering Pipeline
+     ```bash
+     pyenv virtualenv 3.11.6 dc-kuzu-0-2-0
+     pyenv activate dc-kuzu-0-2-0
+     ```
 
-Execute the following commands to start the pipeline:
+### Managing Dependencies
 
-```bash
-python src/config_generate_env.py
-python src/main.py
-```
+1. **Upgrade `pip`, `setuptools`, and `wheel`:**
 
-## Additional Commands
+   ```bash
+   pip install --upgrade pip setuptools wheel
+   ```
 
-Here are some useful commands for managing your environment and project:
+2. **Install `pip-tools` for Dependency Management:**
+
+   ```bash
+   pip install pip-tools
+   ```
+
+3. **Compile and Install Dependencies:**
+
+   - For version 0.1.1:
+
+     ```bash
+     pip-compile requirements-kuzu-0.0.11.in
+     pip install --no-cache-dir -r requirements-kuzu-0.0.11.txt
+     ```
+
+   - For version 0.2.0:
+
+     ```bash
+     pip-compile requirements-kuzu-0.2.0.in
+     pip install --no-cache-dir -r requirements-kuzu-0.2.0.txt
+     ```
+
+### Cleaning Up
+
+After you're done working with a virtual environment, you can deactivate and remove it:
 
 - **Deactivate the Virtual Environment:**
 
@@ -77,31 +99,27 @@ Here are some useful commands for managing your environment and project:
   pyenv deactivate
   ```
 
-- **Clean Python Caches:**
+- **Uninstall the Virtual Environment:**
 
-  Remove all `__pycache__` directories within the project:
+  - For version 0.1.1:
+
+    ```bash
+    pyenv uninstall -f dc-kuzu-0-1-1
+    ```
+
+  - For version 0.2.0:
+
+    ```bash
+    pyenv uninstall -f dc-kuzu-0-2-0
+    ```
+
+- **Remove Python Caches:**
+
+  Run the following command from the project root to clean up all `__pycache__` directories:
 
   ```bash
   find . -type d -name '__pycache__' -exec rm -r {} +
   ```
 
-- **Uninstall the Virtual Environment:**
-
-  ```bash
-  pyenv uninstall -f dc-kuzu-test-gen
-  ```
-
-- **Update Dependencies with pip-tools:**
-
-  First, install `pip-tools`:
-
-  ```bash
-  pip install pip-tools
-  ```
-
-  Then, update all package versions and regenerate `requirements.txt`:
-
-  ```bash
-  pip-compile --upgrade
-  pip install --no-cache-dir -r requirements.txt
-  ```
+This setup ensures that your development environment is clean, organized, and consistent across different versions of your project. Happy coding!
+```
