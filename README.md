@@ -216,21 +216,15 @@ After testing with a virtual environment deactivate and remove it:
   find . -type d -name '__pycache__' -exec rm -r {} +
   ```
 
-- **Install CLI :**
+---
 
-```bash
+## Tools
 
-  curl -L -O https://github.com/kuzudb/kuzu/releases/download/v0.2.1/kuzu_cli-osx-universal.tar.gz
+### Auto Install CLI
 
+The `get_cli.sh` script is designed for automating the download, decompression, and setup processes of command-line interface (CLI) tools. It enables the use of custom download URLs, efficiently manages version extraction, and organizes files into a neatly structured directory named after the tool and its version. For streamlined operations, it includes a non-interactive mode with default configurations requiring no user input.
 
-# Make kuzu executable
-chmod +x ./kuzu
-
-# Run KuzuDB CLI replace with path to the KuzuDB created by the pipline eg:
-
-COPY WorksAt FROM "{PATH}/data/relationships_0.parquet";
-
-```
+For detailed information on usage, customization, and features, see the [README for the `get_cli.sh` script](src/tools/README.md).
 
 ---
 
