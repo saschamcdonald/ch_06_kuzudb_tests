@@ -129,7 +129,7 @@ After installing the desired Python version, you can create a virtual environmen
 
 ### Create and Activate Virtual Environment and run the second test for Kuzu Version 0.2.0:
 
-**NOTE:** This version successfully loads the Company and Person tables but ERRORS on loading the Relationship data (FAILS using defaults provided in this repository). : `ERROR - Failed to import data into WORkS_AT Node Table. Error details: Buffer manager exception: Failed to claim a frame.`
+**NOTE:** This version successfully loads the Company and Person tables but ERRORS on loading the Relationship data (FAILS using defaults provided in this repository). : `ERROR - Failed to import data into WorksAt Node Table. Error details: Buffer manager exception: Failed to claim a frame.`
 
 - **For Kuzu version 0.2.1**:
 
