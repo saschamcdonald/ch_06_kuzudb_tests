@@ -1,6 +1,7 @@
 *.pyc
 __pycache__/
 FILE*
+kuzu/*
 data/*
 prod_data/*
 .DS_Store

@@ -18,3 +18,4 @@ COPY WorksAt FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/
 MATCH (n:Company) RETURN COUNT(n) AS CompanyNodeCount;;
 MATCH (n:Person) RETURN COUNT(n) AS PersonNodeCount;
 MATCH ()-[r:WorksAt]-() RETURN COUNT(r) AS RelationshipCount;
+LOAD FROM "data/relationships_0.parquet" RETURN *;
