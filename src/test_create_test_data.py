@@ -62,8 +62,8 @@ def generate_test_data(num_records, num_dynamic_columns, entity_type):
 def save_data_to_parquet(table, path):
     """Save the generated PyArrow Table to a Parquet file with error handling."""
     try:
-        # pq.write_table(table, path, compression='snappy')
-        pq.write_table(table, path)
+        pq.write_table(table, path, compression='snappy')
+        # pq.write_table(table, path)
 
         logging.info(f"Data successfully saved to {path}.")
     except Exception as e:
