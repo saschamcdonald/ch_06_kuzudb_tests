@@ -131,29 +131,51 @@ After installing the desired Python version, you can create a virtual environmen
 
 **NOTE:** This version successfully loads the Company and Person tables but ERRORS on loading the Relationship data (FAILS using defaults provided in this repository). : `ERROR - Failed to import data into WORkS_AT Node Table. Error details: Buffer manager exception: Failed to claim a frame.`
 
-- **For Kuzu version 0.2.0**:
+- **For Kuzu version 0.2.1**:
 
   ```bash
   # Deactivate any currently active pyenv environment
   pyenv deactivate
   # Clean up all `__pycache__` directories from the project root:
   find . -type d -name '__pycache__' -exec rm -r {} +
-  # Create and activate a new virtual environment for KuzuDB version 0.2.0
-  pyenv virtualenv 3.11.6 dc-kuzu-0-2-0
-  pyenv activate dc-kuzu-0-2-0
+  # Create and activate a new virtual environment for KuzuDB version 0.2.1
+  pyenv virtualenv 3.11.6 dc-kuzu-0-2-1
+  pyenv activate dc-kuzu-0-2-1
   # Upgrade pip, setuptools, and wheel to the latest versions
   pip install --upgrade pip setuptools wheel
   # Install pip-tools for dependency management
   pip install pip-tools
   # Compile dependencies from the .in file to a .txt file
-  pip-compile requirements-kuzu-0.2.0.in
+  pip-compile requirements-kuzu-0.2.1.in
   # Install dependencies from the compiled requirements file
-  pip install --no-cache-dir -r requirements-kuzu-0.2.0.txt
+  pip install --no-cache-dir -r requirements-kuzu-0.2.1.txt
+  # Run the main script to generate and load data into KuzuDB
+  # (Comment out data creation call in main.py if data has already been generated)
+  python src/main.py
+
+  ```
+- **For Kuzu version latest**:
+
+  ```bash
+  # Deactivate any currently active pyenv environment
+  pyenv deactivate
+  # Clean up all `__pycache__` directories from the project root:
+  find . -type d -name '__pycache__' -exec rm -r {} +
+  # Create and activate a new virtual environment for KuzuDB version latest
+  pyenv virtualenv 3.11.6 dc-kuzu-latest
+  pyenv activate dc-kuzu-latest
+  # Upgrade pip, setuptools, and wheel to the latest versions
+  pip install --upgrade pip setuptools wheel
+  # Install pip-tools for dependency management
+  pip install pip-tools
+  # Compile dependencies from the .in file to a .txt file
+  pip-compile requirements-kuzu-latest.in
+  # Install dependencies from the compiled requirements file
+  pip install --no-cache-dir -r requirements-kuzu-latest.txt
   # Run the main script to generate and load data into KuzuDB
   # (Comment out data creation call in main.py if data has already been generated)
   python src/main.py
   ```
-
 ---
 
 ### Cleaning Up
@@ -171,7 +193,7 @@ After testing with a virtual environment deactivate and remove it:
   - For version 0.1.1:
 
     ```bash
-    pyenv uninstall -f dc-kuzu-0-1-1
+     pyenv uninstall dc-kuzu-0-1-1
     ```
 
   - For version 0.2.0:
@@ -179,14 +201,37 @@ After testing with a virtual environment deactivate and remove it:
     ```bash
     pyenv uninstall -f dc-kuzu-0-2-0
     ```
+  
+  - For Latest version
+  
+    ```bash
+    pyenv uninstall -f dc-kuzu-latest
+    ```
 
 - **Remove Python Caches:**
 
-  Run the following command from the project root to clean up all `__pycache__` directories:
+- Run the following command from the project root to clean up all `__pycache__` directories:
 
   ```bash
   find . -type d -name '__pycache__' -exec rm -r {} +
   ```
+
+- **Install CLI :**
+
+```bash
+#   curl -L -O https://github.com/kuzudb/kuzu/releases/download/v0.2.0/kuzu_cli-osx-x86_64.zip
+  curl -L -O https://github.com/kuzudb/kuzu/releases/download/v0.2.1/kuzu_cli-osx-universal.tar.gz
+
+
+# Make kuzu executable
+chmod +x ./kuzu
+
+# Run KuzuDB CLI replace with path to the KuzuDB created by the pipline eg:
+# ./utils/kuzu /Volumes/G-DRIVE/data/Databases/prod/{DATABASE_NAME}
+./utils/kuzu "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/test_kuzu_db_v0_2_1"
+COPY WorksAt FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/relationships_0.parquet";
+
+```
 
 ---
 

@@ -1,0 +1,20 @@
+COPY User FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/relationships_0.parquet" ;
+COPY WorksAT FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/relationships_0.parquet";
+COPY WorksAt FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/relationships_0.parquet";
+--defaultBPSize ;
+kuzu --defaultBPSize ;
+:help
+CCALL current_setting('threads') return *;
+CALL current_setting('threads') return *;
+:help
+CALL current_setting('timeout') return *;
+CALL current_setting('threads') return *;
+CALL TIMEOUT=3000000;
+CALL current_setting('timeout') return *;
+COPY WorksAt FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/relationships_0.parquet";
+CALL enable_semi_mask=false;
+CALL current_setting('enable_semi_mask') RETURN *;
+COPY WorksAt FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/relationships_0.parquet";
+MATCH (n:Company) RETURN COUNT(n) AS CompanyNodeCount;;
+MATCH (n:Person) RETURN COUNT(n) AS PersonNodeCount;
+MATCH ()-[r:WorksAt]-() RETURN COUNT(r) AS RelationshipCount;

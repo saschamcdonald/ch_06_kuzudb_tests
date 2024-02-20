@@ -9,8 +9,6 @@ from importlib.metadata import version  # For Python 3.8 and newer
 from tqdm import tqdm
 
 
-
-
 def setup_logging():
     """Set up basic logging for the script."""
     logging.basicConfig(level=logging.INFO,
@@ -35,6 +33,7 @@ def import_table_data(conn, copy_statement, table_name):
     except RuntimeError as e:
         logging.error(f"Failed to import data into {table_name} Node Table. Error details: {e}")
         return None
+
 
 def format_duration(seconds):
     """Formats the duration from seconds to minutes and seconds for readability."""
@@ -100,6 +99,8 @@ def main():
     # Dynamically get the version of kuzu
     kuzu_version = version("kuzu")
 
+    logging.info("Starting KuzuDB processing...")
+
     # Construct the database name dynamically based on the kuzu version
     DATABASE_NAME = f'test_kuzu_db_v{kuzu_version.replace(".", "_")}'
     DATABASE_DIR = os.path.join(TEST_DATA_PATH, DATABASE_NAME)
@@ -107,26 +108,36 @@ def main():
     DROP_TABLES = True
 
     # Parquet file paths
-    COMPANY_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'companies.parquet')
-    PERSON_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'persons.parquet')
-    RELATIONSHIP_PARQUET_PATH = os.path.join(
-        TEST_DATA_PATH, 'relationships.parquet')
-
+    COMPANY_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'companies_0.parquet')
+    PERSON_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'persons_0.parquet')
+    RELATIONSHIP_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'relationships_0.parquet')
 
     ensure_directories_exist([DATABASE_DIR])
     logging.info("Starting KuzuDB processing...")
 
     # Initialize KuzuDB connection
     try:
-        db = kuzu.Database(os.path.join(DATABASE_DIR, DATABASE_NAME))
+        total_ram_gb = 32
+        buffer_pool_size = int(0.8 * total_ram_gb * 1024 * 1024 * 1024)
+
+        # Initialize KuzuDB with custom buffer pool size
+        # db = kuzu.Database(os.path.join(DATABASE_DIR, DATABASE_NAME),
+        #                     buffer_pool_size=buffer_pool_size,
+        #                     max_num_threads=12,  # Utilize 6 CPU cores
+        #                     compression=True,  # Enable compression if needed
+        #                     read_only=False)
+        # conn = kuzu.Connection(db)
+            # Initialize KuzuDB connection
+        db = kuzu.Database(os.path.join(DATABASE_DIR))
         conn = kuzu.Connection(db)
+        logging.info("KuzuDB connection initialized successfully.")
     except Exception as e:
         logging.error(f"Failed to initialize KuzuDB connection: {e}")
         sys.exit(1)  # Exit if database connection cannot be established
 
     # Drop existing tables if required
     if DROP_TABLES:
-        for table_name in ["WORkS_AT", "Company", "Person"]:
+        for table_name in ["WorksAt", "Company", "Person"]:
             try:
                 conn.execute(f"DROP TABLE {table_name}")
                 logging.info(f"Table {table_name} dropped.")
@@ -139,13 +150,13 @@ def main():
                 else:
                     logging.error(f"Error dropping table {table_name}: {e}")
 
-    # Create Company and Person node tables, and WORkS_AT relationship table
+    # Create Company and Person node tables, and WorksAt relationship table
     create_statement_company = create_node_table_statement_from_parquet(
         COMPANY_PARQUET_PATH, "Company", "company_id")
     create_statement_person = create_node_table_statement_from_parquet(
         PERSON_PARQUET_PATH, "Person", "person_id")
     create_statement_relationship = create_rel_table_statement_from_parquet(
-        RELATIONSHIP_PARQUET_PATH, "WORkS_AT")
+        RELATIONSHIP_PARQUET_PATH, "WorksAt")
 
     for statement in [create_statement_company, create_statement_person, create_statement_relationship]:
         try:
@@ -154,13 +165,13 @@ def main():
         except Exception as e:
             logging.error(f"Failed to execute statement. Error details: {e}")
 
-        # Assuming conn is your database connection object
+    # Load data from Parquet files into KuzuDB tables
     load_times = []
-    table_names = ["Person", "Company", "WORkS_AT"]
+    table_names = ["Person", "Company", "WorksAt"]
     parquet_paths = {
-        "Person": os.path.join(TEST_DATA_PATH, 'persons.parquet'),
-        "Company": os.path.join(TEST_DATA_PATH, 'companies.parquet'),
-        "WORkS_AT": os.path.join(TEST_DATA_PATH, 'relationships.parquet')
+        "Person": os.path.join(TEST_DATA_PATH, 'persons_*.parquet'),
+        "Company": os.path.join(TEST_DATA_PATH, 'companies_*.parquet'),
+        "WorksAt": os.path.join(TEST_DATA_PATH, 'relationships_*.parquet')
     }
 
     for table_name in table_names:
@@ -168,7 +179,7 @@ def main():
         if duration is not None:
             load_times.append((table_name, duration))
 
-    # Displaying load times in a PrettyTable
+    # Display load times
     load_times_table = PrettyTable()
     load_times_table.title = f"Load Times for {DATABASE_NAME}"
     load_times_table.field_names = ["Table Name", "Load Time (Seconds)"]
@@ -178,31 +189,29 @@ def main():
 
     logging.info(f"Kuzu loaded time counts:\n {load_times_table}")
 
-  # Execute queries and display results
+    # Execute queries and display results
     count_table = PrettyTable()
     count_table.title = f"Database Summary for {DATABASE_NAME}"
     count_table.field_names = ["Entity", "Node Count", "Relationship Count"]
-    
-    
+
     company_node_count = conn.execute(
         'MATCH (n:Company) RETURN COUNT(n) AS CompanyNodeCount;').get_next()[0]
     person_node_count = conn.execute(
         'MATCH (n:Person) RETURN COUNT(n) AS PersonNodeCount;').get_next()[0]
-    WORkS_AT_rel_count = conn.execute(
-        'MATCH ()-[r:WORkS_AT]-() RETURN COUNT(r) AS RelationshipCount;').get_next()[0]
+    WorksAt_rel_count = conn.execute(
+        'MATCH ()-[r:WorksAt]-() RETURN COUNT(r) AS RelationshipCount;').get_next()[0]
 
-    # Formatting numbers with commas
     formatted_company_node_count = format(company_node_count, ',')
     formatted_person_node_count = format(person_node_count, ',')
-    formatted_WORkS_AT_rel_count = format(WORkS_AT_rel_count, ',')
+    formatted_WorksAt_rel_count = format(WorksAt_rel_count, ',')
 
     count_table.add_row(["Company", formatted_company_node_count, "-"])
     count_table.add_row(["Person", formatted_person_node_count, "-"])
-    count_table.add_row(["-", "-", formatted_WORkS_AT_rel_count])
+    count_table.add_row(["-", "-", formatted_WorksAt_rel_count])
     logging.info(f"Kuzu loaded query counts:\n {count_table}")
 
-
     print("Processing completed.")
+
 
 if __name__ == "__main__":
     main()

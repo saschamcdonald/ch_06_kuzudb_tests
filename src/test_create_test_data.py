@@ -23,9 +23,9 @@ NUM_DYNAMIC_PERSON_COLUMNS = int(os.getenv('NUM_DYNAMIC_PERSON_COLUMNS', 5))
 NUM_DYNAMIC_RELATIONSHIP_COLUMNS = int(os.getenv('NUM_DYNAMIC_RELATIONSHIP_COLUMNS', 5))
 
 # Define paths for output Parquet files using the base path
-COMPANY_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'companies.parquet')
-PERSON_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'persons.parquet')
-RELATIONSHIP_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'relationships.parquet')
+COMPANY_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'companies')
+PERSON_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'persons')
+RELATIONSHIP_PARQUET_PATH = os.path.join(TEST_DATA_PATH, 'relationships')
 
 def setup_logging():
     """Set up basic logging for the script."""
@@ -62,10 +62,28 @@ def generate_test_data(num_records, num_dynamic_columns, entity_type):
 def save_data_to_parquet(table, path):
     """Save the generated PyArrow Table to a Parquet file with error handling."""
     try:
-        pq.write_table(table, path, compression='snappy')
+        # pq.write_table(table, path, compression='snappy')
+        pq.write_table(table, path)
+
         logging.info(f"Data successfully saved to {path}.")
     except Exception as e:
         logging.error(f"Failed to save data to {path}. Error: {e}")
+
+def split_parquet_files(df, output_path_prefix, num_files):
+    """Split the DataFrame into multiple Parquet files."""
+    num_rows_per_file = len(df) // num_files
+    remainder = len(df) % num_files
+    start = 0
+    for i in range(num_files):
+        end = start + num_rows_per_file
+        if i < remainder:
+            end += 1
+        # Ensure the first file includes the header
+        if i == 0:
+            pq.write_table(pa.Table.from_pandas(df[start:end]), f"{output_path_prefix}_{i}.parquet", write_statistics=True)
+        else:
+            pq.write_table(pa.Table.from_pandas(df[start:end]), f"{output_path_prefix}_{i}.parquet", write_statistics=False)
+        start = end
 
 def main():
     setup_logging()
@@ -73,11 +91,11 @@ def main():
 
     # Generate and save Company data with dynamic properties
     company_table, company_df = generate_test_data(NUM_COMPANIES, NUM_DYNAMIC_COMPANY_COLUMNS, 'company')
-    save_data_to_parquet(company_table, COMPANY_PARQUET_PATH)
+    split_parquet_files(company_df, COMPANY_PARQUET_PATH, 1)
 
     # Generate and save Person data with dynamic properties
     person_table, person_df = generate_test_data(NUM_PERSONS, NUM_DYNAMIC_PERSON_COLUMNS, 'person')
-    save_data_to_parquet(person_table, PERSON_PARQUET_PATH)
+    split_parquet_files(person_df, PERSON_PARQUET_PATH, 1)
 
     # Generate Relationship data
     try:
@@ -88,8 +106,7 @@ def main():
         # Reorder columns to have 'person_id' and 'company_id' first
         cols = ['person_id', 'company_id'] + [col for col in relationship_df.columns if col not in ['person_id', 'company_id']]
         relationship_df = relationship_df[cols]
-        relationship_table = pa.Table.from_pandas(relationship_df)
-        save_data_to_parquet(relationship_table, RELATIONSHIP_PARQUET_PATH)
+        split_parquet_files(relationship_df, RELATIONSHIP_PARQUET_PATH, 1)
     except Exception as e:
         logging.error(f"Failed to generate or save relationship data. Error: {e}")
 
