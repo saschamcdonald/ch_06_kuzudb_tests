@@ -227,9 +227,8 @@ After testing with a virtual environment deactivate and remove it:
 chmod +x ./kuzu
 
 # Run KuzuDB CLI replace with path to the KuzuDB created by the pipline eg:
-# ./utils/kuzu /Volumes/G-DRIVE/data/Databases/prod/{DATABASE_NAME}
-./utils/kuzu "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/test_kuzu_db_v0_2_1"
-COPY WorksAt FROM "/Users/saschamcdonald/Dropbox/Businesses/Datacue/code/Active/ch_06_kuzudb_tests/data/relationships_0.parquet";
+
+COPY WorksAt FROM "{PATH}/data/relationships_0.parquet";
 
 ```
 
