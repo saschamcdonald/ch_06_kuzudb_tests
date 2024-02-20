@@ -219,7 +219,7 @@ After testing with a virtual environment deactivate and remove it:
 - **Install CLI :**
 
 ```bash
-#   curl -L -O https://github.com/kuzudb/kuzu/releases/download/v0.2.0/kuzu_cli-osx-x86_64.zip
+
   curl -L -O https://github.com/kuzudb/kuzu/releases/download/v0.2.1/kuzu_cli-osx-universal.tar.gz
 
 
