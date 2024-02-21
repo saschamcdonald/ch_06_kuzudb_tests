@@ -1,0 +1,63 @@
+
+    <html>
+    <head>
+        <title>Database Report</title>
+        <style>table, th, td {border: 1px solid black; border-collapse: collapse;}</style>
+    </head>
+    <body>
+        <h1>KuzuDB Report</h1>
+        <h2>Log Messages</h2>
+        <pre></pre>
+        <h2>Load Times</h2>
+        <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Table Name</th>
+      <th>Load Time (Seconds)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Person</td>
+      <td>0.057870</td>
+    </tr>
+    <tr>
+      <td>Company</td>
+      <td>0.065825</td>
+    </tr>
+    <tr>
+      <td>WorksAt</td>
+      <td>0.062945</td>
+    </tr>
+  </tbody>
+</table>
+        <h2>Database Summary</h2>
+        <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Entity</th>
+      <th>Node Count</th>
+      <th>Relationship Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Company</td>
+      <td>3,000</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Person</td>
+      <td>1,000</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>-</td>
+      <td>-</td>
+      <td>18,000</td>
+    </tr>
+  </tbody>
+</table>
+    </body>
+    </html>
+    

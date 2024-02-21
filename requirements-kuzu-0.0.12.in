@@ -1,0 +1,9 @@
+kuzu==0.0.12
+prettytable
+pyarrow
+python-dotenv
+tqdm
+paramiko
+pandas
+faker
+numpy
