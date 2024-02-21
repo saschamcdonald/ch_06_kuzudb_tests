@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import logging
+import json
 import pyarrow.parquet as pq
 import kuzu
 import pandas as pd
@@ -9,6 +10,8 @@ from prettytable import PrettyTable
 from importlib.metadata import version  # For Python 3.8 and newer
 from tqdm import tqdm
 from io import StringIO
+from DashboardCreator import DashboardCreator
+
 
 # Update setup_logging to capture log messages for the HTML report
 def setup_logging():
@@ -115,6 +118,17 @@ def execute_query_and_display(conn, query):
     except Exception as e:
         logging.error(f"Query execution failed. Error details: {e}")
 
+
+
+# Add this function to your script
+def save_data_for_dashboard(load_times, database_summary, logs):
+    data = {
+        "load_times": load_times,
+        "database_summary": database_summary,
+        "logs": logs.getvalue()  # Assuming logs is a StringIO object
+    }
+    with open('dashboard_data.json', 'w') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
 def main():
     log_stream = setup_logging()
 
@@ -194,10 +208,19 @@ def main():
     except Exception as e:
         logging.error(f"Error compiling database summary: {e}")
 
-    logs_html = log_stream
-    generate_html_report(load_times, database_summary, logs_html)
+    # logs_html = log_stream
+    # generate_html_report(load_times, database_summary, logs_html)
+    save_data_for_dashboard(load_times, database_summary, log_stream)
 
     logging.info("Processing completed.")
+
+    save_data_for_dashboard(load_times, database_summary, log_stream)
+
+    # Create the dashboard after saving the data
+    dashboard_creator = DashboardCreator()
+    dashboard_creator.generate_dashboard()
+
+    logging.info("Dashboard created successfully.")
 
 if __name__ == "__main__":
     main()

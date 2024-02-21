@@ -4,6 +4,7 @@ import logging
 import test_create_test_data
 import test_ingress_load_kuzudb
 
+
 # to make sure that all packages inside 'src' can be found by Python
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
