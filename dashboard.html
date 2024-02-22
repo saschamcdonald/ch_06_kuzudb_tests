@@ -4,85 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="style.css">  <!-- Ensure you have a CSS file for styling -->
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>Dashboard</h1>
-    <div>
-        <h2>Load Times</h2>
-        <canvas id="loadTimeChart"></canvas>
-    </div>
-    <div>
-        <h2>Database Summary</h2>
-        <canvas id="summaryChart"></canvas>
-    </div>
-    <script>
-        var loadTimeCtx = document.getElementById('loadTimeChart').getContext('2d');
-        new Chart(loadTimeCtx, {
-            type: 'bar',
-            data: {
-                labels: ["Person", "Company", "WorksAt"],
-                datasets: [{
-                    label: 'Load Times (Seconds)',
-                    data: [0.09705805778503418, 0.066986083984375, 0.1273350715637207],
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
+<div><h2>Load Times</h2><canvas id="loadTimeChart"></canvas></div>
+<script>
+            var ctx = document.getElementById('loadTimeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Person", "Company", "WorksAt"],
+                    datasets: [{
+                        label: 'Load Times',
+                        data: [0.15640783309936523, 0.10301423072814941, 0.16373991966247559],
+                        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                        borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
                             beginAtZero: true
                         }
-                    }]
-                }
-            }
-        });
-
-        var summaryCtx = document.getElementById('summaryChart').getContext('2d');
-        new Chart(summaryCtx, {
-            type: 'pie',
-            data: {
-                labels: ["Company", "Person", "Miscellaneous"],
-                datasets: [{
-                    label: 'Node Counts',
-                    data: ["3,000", "1,000", "-"],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
                     },
-                    title: {
-                        display: true,
-                        text: 'Database Entity Counts'
-                    }
+                    responsive: true,
                 }
-            },
-        });
-    </script>
-</body>
-</html>
+            });
+        </script>
+<div><h2>Database Summary</h2><canvas id="summaryChart"></canvas></div>
+<script>
+            var ctx = document.getElementById('summaryChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ["Company", "Person", "Miscellaneous"],
+                    datasets: [{
+                        label: 'Database Entities',
+                        data: [3000, 1000, 0],
+                        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                        borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    responsive: true,
+                }
+            });
+        </script>
+
+    </body>
+    </html>
         
