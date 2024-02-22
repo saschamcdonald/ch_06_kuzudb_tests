@@ -1,0 +1,49 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.resizable-chart {
+    position: relative;
+    margin-bottom: 40px; /* Adds space between charts */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds a subtle shadow for depth */
+    background-color: #fff; /* White background for the chart area */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Padding around the chart */
+    box-sizing: border-box;
+}
+
+.resize-handle {
+    width: 20px;
+    height: 20px;
+    background-color: #ccc;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    cursor: se-resize;
+    border-radius: 100%; /* Makes the resize handle circular */
+}
+
+canvas {
+    display: block; /* Prevents default inline display */
+    max-width: 100%;
+}
+
+/* Style for the chart titles */
+.resizable-chart h2 {
+    text-align: center;
+    color: #666;
+    margin: 0 0 20px; /* Adds space between title and chart */
+}
+
+.resizable-chart {
+    max-width: 800px !important;
+    max-height: 800px !important;
+}

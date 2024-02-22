@@ -2,15 +2,15 @@
     "load_times": [
         {
             "Table Name": "Person",
-            "Load Time (Seconds)": 0.15640783309936523
+            "Load Time (Seconds)": 0.09986495971679688
         },
         {
             "Table Name": "Company",
-            "Load Time (Seconds)": 0.10301423072814941
+            "Load Time (Seconds)": 0.0914921760559082
         },
         {
             "Table Name": "WorksAt",
-            "Load Time (Seconds)": 0.16373991966247559
+            "Load Time (Seconds)": 0.12800216674804688
         }
     ],
     "database_summary": [
@@ -25,7 +25,7 @@
             "Relationship Count": "-"
         },
         {
-            "Entity": "Miscellaneous",
+            "Entity": "W",
             "Node Count": "-",
             "Relationship Count": "18,000"
         }

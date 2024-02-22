@@ -1,15 +1,15 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <h1>Dashboard</h1>
-<div><h2>Load Times</h2><canvas id="loadTimeChart"></canvas></div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body>
+        <h1>Dashboard</h1>
+    <div class="resizable-chart"><h2>Load Times</h2><canvas id="loadTimeChart"></canvas><div class="resize-handle"></div></div>
 <script>
             var ctx = document.getElementById('loadTimeChart').getContext('2d');
             new Chart(ctx, {
@@ -18,29 +18,25 @@
                     labels: ["Person", "Company", "WorksAt"],
                     datasets: [{
                         label: 'Load Times',
-                        data: [0.15640783309936523, 0.10301423072814941, 0.16373991966247559],
+                        data: [0.09986495971679688, 0.0914921760559082, 0.12800216674804688],
                         backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                         borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                         borderWidth: 1
                     }]
                 },
                 options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
                     responsive: true,
+                    maintainAspectRatio: true,
                 }
             });
         </script>
-<div><h2>Database Summary</h2><canvas id="summaryChart"></canvas></div>
+<div class="resizable-chart"><h2>Database Summary</h2><canvas id="summaryChart"></canvas><div class="resize-handle"></div></div>
 <script>
             var ctx = document.getElementById('summaryChart').getContext('2d');
             new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: ["Company", "Person", "Miscellaneous"],
+                    labels: ["Company", "Person", "W"],
                     datasets: [{
                         label: 'Database Entities',
                         data: [3000, 1000, 0],
@@ -50,16 +46,49 @@
                     }]
                 },
                 options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
                     responsive: true,
+                    maintainAspectRatio: true,
                 }
             });
         </script>
-
+<script>
+            document.querySelectorAll('.resizable-chart').forEach(function(chartContainer) {
+                let isResizing = true;
+                
+                const resizeHandle = chartContainer.querySelector('.resize-handle');
+                resizeHandle.addEventListener('mousedown', function(e) {
+                    isResizing = true;
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', stopResize);
+                });
+                
+                function handleMouseMove(e) {
+                    if (isResizing) {
+                        const minWidth = 600; // Minimum width in pixels
+                        const maxWidth = 600; // Maximum width in pixels
+                        const minHeight = 600; // Minimum height in pixels
+                        const maxHeight = 600; // Maximum height in pixels
+                        let newWidth = e.clientX - chartContainer.offsetLeft;
+                        let newHeight = e.clientY - chartContainer.offsetTop;
+                        
+                        // Apply constraints
+                        newWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+                        newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+                        
+                        chartContainer.style.width = newWidth + 'px';
+                        chartContainer.style.height = newHeight + 'px';
+                    }
+                }
+                
+                function stopResize(e) {
+                    if (isResizing) {
+                        isResizing = true;
+                        document.removeEventListener('mousemove', handleMouseMove);
+                        document.removeEventListener('mouseup', stopResize);
+                    }
+                }
+            });
+        </script>
     </body>
     </html>
         

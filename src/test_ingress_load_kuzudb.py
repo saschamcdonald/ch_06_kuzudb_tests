@@ -16,7 +16,7 @@ from DashboardCreator import DashboardCreator  # Ensure DashboardCreator.py is c
 # Update setup_logging to capture log messages for the HTML report
 def setup_logging():
     log_stream = StringIO()
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', stream=log_stream)
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', stream=log_stream)
     return log_stream
 
 
@@ -180,8 +180,9 @@ def main():
         database_summary = [
             {"Entity": "Company", "Node Count": format(company_node_count, ','), "Relationship Count": "-"},
             {"Entity": "Person", "Node Count": format(person_node_count, ','), "Relationship Count": "-"},
-            {"Entity": "Miscellaneous", "Node Count": "-", "Relationship Count": format(WorksAt_rel_count, ',')}
+            {"Entity": "W", "Node Count": "-", "Relationship Count": format(WorksAt_rel_count, ',')}
         ]
+        
     except Exception as e:
         logging.error(f"Error compiling database summary: {e}")
         
