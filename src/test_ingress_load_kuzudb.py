@@ -12,59 +12,20 @@ from tqdm import tqdm
 from io import StringIO
 from DashboardCreator import DashboardCreator
 
-
 # Update setup_logging to capture log messages for the HTML report
 def setup_logging():
     log_stream = StringIO()
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', stream=log_stream)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[logging.StreamHandler(log_stream)]
+    )
     return log_stream
 
-# Generate and save the HTML report
-def generate_html_report(load_times, database_summary, logs):
-    load_times_df = pd.DataFrame(load_times, columns=['Table Name', 'Load Time (Seconds)'])
-    database_summary_df = pd.DataFrame(database_summary, columns=['Entity', 'Node Count', 'Relationship Count'])
 
-    load_times_html = load_times_df.to_html(index=False)
-    database_summary_html = database_summary_df.to_html(index=False)
-
-    html_report = f"""
-    <html>
-    <head>
-        <title>Database Report</title>
-        <style>table, th, td {{border: 1px solid black; border-collapse: collapse;}}</style>
-    </head>
-    <body>
-        <h1>KuzuDB Report</h1>
-        <h2>Log Messages</h2>
-        <pre>{logs.getvalue()}</pre>
-        <h2>Load Times</h2>
-        {load_times_html}
-        <h2>Database Summary</h2>
-        {database_summary_html}
-    </body>
-    </html>
-    """
-
-    with open('database_report.html', 'w') as f:
-        f.write(html_report)
-
-# Ensure all specified directories exist
 def ensure_directories_exist(directories):
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
-
-# Import data into a table and measures the time taken
-def import_table_data(conn, copy_statement, table_name):
-    start_time = time.time()
-    try:
-        conn.execute(copy_statement)
-        end_time = time.time()
-        duration_seconds = end_time - start_time
-        logging.info(f'Imported data into "{table_name}" Node Table in {duration_seconds:.2f} seconds.')
-        return duration_seconds
-    except RuntimeError as e:
-        logging.error(f"Failed to import data into {table_name} Node Table. Error details: {e}")
-        return None
 
 # Formats the duration from seconds to minutes and seconds for readability
 def format_duration(seconds):
@@ -120,17 +81,65 @@ def execute_query_and_display(conn, query):
 
 
 
-# Add this function to your script
+def import_table_data(conn, copy_statement, table_name):
+    start_time = time.time()
+    try:
+        conn.execute(copy_statement)
+        end_time = time.time()
+        duration_seconds = end_time - start_time
+        logging.info(f'Imported data into "{table_name}" Node Table in {duration_seconds:.2f} seconds.')
+        return duration_seconds
+    except Exception as e:  # Use a more specific exception if possible
+        logging.error(f"Failed to import data into {table_name} Node Table. Error details: {e}")
+        return None
+
+# Function to save data for the dashboard (assuming it's defined correctly above)
 def save_data_for_dashboard(load_times, database_summary, logs):
+    # Ensure logs is a string
+    logs_str = logs.getvalue() if hasattr(logs, 'getvalue') else str(logs)
+
+    # Format the database summary to ensure it's in the correct structure
+    formatted_database_summary = []
+    for entry in database_summary:
+        if isinstance(entry, (list, tuple)) and len(entry) == 3:
+            entity, node_count, relationship_count = entry
+            formatted_entry = {
+                "Entity": entity if entity != "-" else "Miscellaneous",
+                "Node Count": node_count,
+                "Relationship Count": relationship_count
+            }
+            formatted_database_summary.append(formatted_entry)
+        else:
+            logging.error("Database summary entry is in an incorrect format: {}".format(entry))
+            continue
+
+    # Structure the load times in a similar protective manner
+    formatted_load_times = []
+    for entry in load_times:
+        if isinstance(entry, (list, tuple)) and len(entry) == 2:
+            table_name, load_time = entry
+            formatted_load_times.append({
+                "Table Name": table_name,
+                "Load Time (Seconds)": load_time
+            })
+        else:
+            logging.error("Load time entry is in an incorrect format: {}".format(entry))
+            continue
+
     data = {
-        "load_times": load_times,
-        "database_summary": database_summary,
-        "logs": logs.getvalue()  # Assuming logs is a StringIO object
+        "load_times": formatted_load_times,
+        "database_summary": formatted_database_summary,
+        "logs": logs_str
     }
+
     with open('dashboard_data.json', 'w') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
+
+
 def main():
     log_stream = setup_logging()
+    logging.info("This is a test log message.")
+
 
     TEST_DATA_PATH = os.getenv('TEST_DATA_PATH')
     kuzu_version = version("kuzu")
@@ -208,19 +217,14 @@ def main():
     except Exception as e:
         logging.error(f"Error compiling database summary: {e}")
 
-    # logs_html = log_stream
-    # generate_html_report(load_times, database_summary, logs_html)
-    save_data_for_dashboard(load_times, database_summary, log_stream)
-
-    logging.info("Processing completed.")
-
-    save_data_for_dashboard(load_times, database_summary, log_stream)
-
-    # Create the dashboard after saving the data
+    # Assuming DashboardCreator is defined with a method generate_dashboard
     dashboard_creator = DashboardCreator()
     dashboard_creator.generate_dashboard()
+    
+    save_data_for_dashboard(load_times, database_summary, log_stream)
 
     logging.info("Dashboard created successfully.")
+
 
 if __name__ == "__main__":
     main()

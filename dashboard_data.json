@@ -1,34 +1,34 @@
 {
     "load_times": [
-        [
-            "Person",
-            0.0673980712890625
-        ],
-        [
-            "Company",
-            0.05946993827819824
-        ],
-        [
-            "WorksAt",
-            0.07062196731567383
-        ]
+        {
+            "Table Name": "Person",
+            "Load Time (Seconds)": 0.10560369491577148
+        },
+        {
+            "Table Name": "Company",
+            "Load Time (Seconds)": 0.11311793327331543
+        },
+        {
+            "Table Name": "WorksAt",
+            "Load Time (Seconds)": 0.14229202270507812
+        }
     ],
     "database_summary": [
-        [
-            "Company",
-            "3,000",
-            "-"
-        ],
-        [
-            "Person",
-            "1,000",
-            "-"
-        ],
-        [
-            "-",
-            "-",
-            "18,000"
-        ]
+        {
+            "Entity": "Company",
+            "Node Count": "3,000",
+            "Relationship Count": "-"
+        },
+        {
+            "Entity": "Person",
+            "Node Count": "1,000",
+            "Relationship Count": "-"
+        },
+        {
+            "Entity": "Miscellaneous",
+            "Node Count": "-",
+            "Relationship Count": "18,000"
+        }
     ],
     "logs": ""
 }
