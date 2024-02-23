@@ -9,16 +9,23 @@
     </head>
     <body>
         <h1>Dashboard</h1>
-    <div class="resizable-chart"><h2>Load Times</h2><canvas id="loadTimeChart"></canvas><div class="resize-handle"></div></div>
-<script>
-            var ctx = document.getElementById('loadTimeChart').getContext('2d');
-            new Chart(ctx, {
+        <div class="tab-container">
+    <div class="tab" id="LoadTimesTab">
+<h2>Load Times</h2>
+<div class="resizable-chart"><canvas id="loadTimeChart"></canvas><div class="resize-handle"></div></div>
+</div>
+<div class="tab" id="DatabaseSummaryTab">
+<h2>Database Summary</h2>
+<div class="resizable-chart"><canvas id="summaryChart"></canvas><div class="resize-handle"></div></div>
+</div>
+</div><script>
+            new Chart(document.getElementById('loadTimeChart').getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: ["Person", "Company", "WorksAt"],
                     datasets: [{
                         label: 'Load Times',
-                        data: [0.13608670234680176, 0.08172392845153809, 0.17426609992980957],
+                        data: [0.159959077835083, 0.10492706298828125, 0.19101166725158691],
                         backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                         borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                         borderWidth: 1
@@ -26,14 +33,11 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                 }
             });
-        </script>
-<div class="resizable-chart"><h2>Database Summary</h2><canvas id="summaryChart"></canvas><div class="resize-handle"></div></div>
-<script>
-            var ctx = document.getElementById('summaryChart').getContext('2d');
-            new Chart(ctx, {
+        
+            new Chart(document.getElementById('summaryChart').getContext('2d'), {
                 type: 'pie',
                 data: {
                     labels: ["Company", "Person", "W"],
@@ -47,11 +51,10 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                 }
             });
-        </script>
-<script>
+        
             document.querySelectorAll('.resizable-chart').forEach(function(chartContainer) {
                 let isResizing = true;
                 
