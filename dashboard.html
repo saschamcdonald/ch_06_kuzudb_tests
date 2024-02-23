@@ -18,7 +18,7 @@
                     labels: ["Person", "Company", "WorksAt"],
                     datasets: [{
                         label: 'Load Times',
-                        data: [0.09986495971679688, 0.0914921760559082, 0.12800216674804688],
+                        data: [0.13608670234680176, 0.08172392845153809, 0.17426609992980957],
                         backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                         borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                         borderWidth: 1
@@ -64,10 +64,10 @@
                 
                 function handleMouseMove(e) {
                     if (isResizing) {
-                        const minWidth = 600; // Minimum width in pixels
-                        const maxWidth = 600; // Maximum width in pixels
-                        const minHeight = 600; // Minimum height in pixels
-                        const maxHeight = 600; // Maximum height in pixels
+                        const minWidth = 1200; // Minimum width in pixels
+                        const maxWidth = 1200; // Maximum width in pixels
+                        const minHeight = 1200; // Minimum height in pixels
+                        const maxHeight = 1200; // Maximum height in pixels
                         let newWidth = e.clientX - chartContainer.offsetLeft;
                         let newHeight = e.clientY - chartContainer.offsetTop;
                         

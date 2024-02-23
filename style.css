@@ -10,6 +10,17 @@ h1 {
     color: #333;
 }
 
+.chart-container h2 {
+    padding: 10px;
+    margin: 0;
+    background-color: #333;
+    color: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    cursor: move;
+    
+}
+
 .resizable-chart {
     position: relative;
     margin-bottom: 40px; /* Adds space between charts */
@@ -21,14 +32,14 @@ h1 {
 }
 
 .resize-handle {
-    width: 20px;
-    height: 20px;
-    background-color: #ccc;
+    width: 10px;
+    height: 10px;
+    background: red;
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: -5px; /* Adjust the position to be outside the container */
+    right: -5px; /* Adjust the position to be outside the container */
+    z-index: 1; /* Ensure the handle is above the chart */
     cursor: se-resize;
-    border-radius: 100%; /* Makes the resize handle circular */
 }
 
 canvas {
@@ -44,6 +55,8 @@ canvas {
 }
 
 .resizable-chart {
-    max-width: 800px !important;
-    max-height: 800px !important;
+    max-width: 400px !important;
+    max-height: 500px !important;
+    
+    
 }

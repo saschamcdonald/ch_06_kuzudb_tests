@@ -51,10 +51,10 @@ class DashboardCreator:
                 
                 function handleMouseMove(e) {
                     if (isResizing) {
-                        const minWidth = 600; // Minimum width in pixels
-                        const maxWidth = 600; // Maximum width in pixels
-                        const minHeight = 600; // Minimum height in pixels
-                        const maxHeight = 600; // Maximum height in pixels
+                        const minWidth = 1200; // Minimum width in pixels
+                        const maxWidth = 1200; // Maximum width in pixels
+                        const minHeight = 1200; // Minimum height in pixels
+                        const maxHeight = 1200; // Maximum height in pixels
                         let newWidth = e.clientX - chartContainer.offsetLeft;
                         let newHeight = e.clientY - chartContainer.offsetTop;
                         
