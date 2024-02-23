@@ -10,53 +10,58 @@ h1 {
     color: #333;
 }
 
-.chart-container h2 {
-    padding: 10px;
-    margin: 0;
-    background-color: #333;
-    color: #fff;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    cursor: move;
-    
-}
-
 .resizable-chart {
     position: relative;
-    margin-bottom: 40px; /* Adds space between charts */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds a subtle shadow for depth */
-    background-color: #fff; /* White background for the chart area */
-    border-radius: 8px; /* Rounded corners */
-    padding: 20px; /* Padding around the chart */
+    margin-bottom: 40px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
     box-sizing: border-box;
+    /* Set a specific height or leave as auto if you prefer the charts to resize based on width */
+    height: auto;
+}
+
+/* Adjust the canvas styles to prevent perpetual height expansion */
+canvas {
+    width: 100% !important; /* Ensures canvas (chart) fills the container */
+    /* Removed height: auto to prevent perpetual expansion */
+    display: block; /* Prevents inline display which can cause layout issues */
+    max-height: 400px; /* Limits the height to prevent indefinite expansion */
 }
 
 .resize-handle {
-    width: 10px;
-    height: 10px;
-    background: red;
+    width: 20px;
+    height: 20px;
+    background-color: #ccc;
     position: absolute;
-    bottom: -5px; /* Adjust the position to be outside the container */
-    right: -5px; /* Adjust the position to be outside the container */
-    z-index: 1; /* Ensure the handle is above the chart */
-    cursor: se-resize;
+    bottom: 0;
+    right: 0;
+    cursor: nwse-resize; /* Diagonal resizing cursor */
+    border-radius: 3px;
 }
 
-canvas {
-    display: block; /* Prevents default inline display */
-    max-width: 100%;
-}
-
-/* Style for the chart titles */
+/* Style adjustments for the chart container */
 .resizable-chart h2 {
     text-align: center;
-    color: #666;
-    margin: 0 0 20px; /* Adds space between title and chart */
+    margin: 0 0 20px;
+    color: #555;
 }
 
+/* Ensure that the chart container does not expand beyond the viewport */
 .resizable-chart {
-    max-width: 400px !important;
-    max-height: 500px !important;
-    
-    
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .resizable-chart {
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    body {
+        padding: 10px;
+    }
 }
