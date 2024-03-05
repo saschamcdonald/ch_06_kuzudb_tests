@@ -180,7 +180,9 @@ def main():
         database_summary = [
             {"Entity": "Company", "Node Count": format(company_node_count, ','), "Relationship Count": "-"},
             {"Entity": "Person", "Node Count": format(person_node_count, ','), "Relationship Count": "-"},
-            {"Entity": "W", "Node Count": "-", "Relationship Count": format(WorksAt_rel_count, ',')}
+            {"Entity": "WorksAt", "Node Count": format(WorksAt_rel_count, ',')}
+
+            # {"Entity": "WorksAt", "Node Count": "-", "Relationship Count": format(WorksAt_rel_count, ',')}
         ]
         
     except Exception as e:
