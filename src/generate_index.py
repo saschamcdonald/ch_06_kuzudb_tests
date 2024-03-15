@@ -2,10 +2,9 @@ import json
 import datetime
 import os
 import shutil
+import hashlib
+
 from importlib.metadata import version  # Check Python version compatibility
-
-# kuzu_version = version("kuzu")
-
 
 # Function to generate chart.js script
 def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
@@ -59,14 +58,22 @@ def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     return chart_js
 
 
+
+
 # Function to find all the JSON files in the directory
 def get_json_files():
     return [f for f in os.listdir('.') if f.endswith('.json')]
 
-
 class DashboardCreator:
     def __init__(self, data_files):
         self.data_files = data_files
+
+    def generate_color(self, filename):
+        hash_value = hashlib.md5(filename.encode()).hexdigest()
+        r = int(hash_value[:2], 16)
+        g = int(hash_value[2:4], 16)
+        b = int(hash_value[4:6], 16)
+        return f'rgba({r}, {g}, {b}, 0.3)'
 
     def generate_dashboard(self):
         index_content = """
@@ -148,7 +155,7 @@ class DashboardCreator:
 
         /* Define active tab styles */
         .sidebar a.active, .sidebar a.active:hover {{
-            background-color: #4CAF50;
+            background-color: {self.generate_color(dashboard_filename)};
             color: white;
         }}
 
@@ -184,8 +191,7 @@ class DashboardCreator:
         }}
         
         th {{
-            background-color: #4CAF50;
-            color: white;
+            color: #111; /* Text color for title columns */
         }}
     </style>
 </head>
@@ -203,7 +209,7 @@ class DashboardCreator:
             html_content += f"""
     <div id="summary" class="tabcontent">
         <h2>Summary Kuzu - {kuzu_version}</h2>
-        <table style="background-color: #f0f0f0;">
+        <table style="background-color: {self.generate_color(dashboard_filename)};">
             <tr><th>Kuzu Version</th><td>{kuzu_version}</td></tr>
             <tr><th>Date of Execution</th><td>{execution_date}</td></tr>
         </table>

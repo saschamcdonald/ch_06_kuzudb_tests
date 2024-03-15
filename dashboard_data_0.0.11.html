@@ -37,7 +37,7 @@
 
         /* Define active tab styles */
         .sidebar a.active, .sidebar a.active:hover {
-            background-color: #4CAF50;
+            background-color: rgba(213, 54, 188, 0.3);
             color: white;
         }
 
@@ -73,8 +73,7 @@
         }
         
         th {
-            background-color: #4CAF50;
-            color: white;
+            color: #111; /* Text color for title columns */
         }
     </style>
 </head>
@@ -100,9 +99,9 @@
 
     <div id="summary" class="tabcontent">
         <h2>Summary Kuzu - 0.0.11</h2>
-        <table style="background-color: #f0f0f0;">
+        <table style="background-color: rgba(213, 54, 188, 0.3);">
             <tr><th>Kuzu Version</th><td>0.0.11</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 18:55:30</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 19:55:51</td></tr>
         </table>
         <h3>Database Summary</h3>
         <table style="background-color: #f8f8f8;">
@@ -112,7 +111,7 @@
         <h3>Load Times: Kuzu - 0.0.11</h3>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-<tr><td>Person</td><td>0.44523191452026367</td></tr><tr><td>Company</td><td>0.09496116638183594</td></tr><tr><td>WorksAt</td><td>0.10188436508178711</td></tr>
+<tr><td>Person</td><td>0.5691587924957275</td></tr><tr><td>Company</td><td>0.1613771915435791</td></tr><tr><td>WorksAt</td><td>0.12305593490600586</td></tr>
         </table>
     </div>
 
@@ -162,7 +161,7 @@
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.44523191452026367</td></tr><tr><td>Company</td><td>0.09496116638183594</td></tr><tr><td>WorksAt</td><td>0.10188436508178711</td></tr></table></div>
+        <tr><td>Person</td><td>0.5691587924957275</td></tr><tr><td>Company</td><td>0.1613771915435791</td></tr><tr><td>WorksAt</td><td>0.12305593490600586</td></tr></table></div>
     <script>
         var ctx = document.getElementById('loadTimeChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -171,7 +170,7 @@
                 labels: ["Person", "Company", "WorksAt"],
                 datasets: [{
                     label: 'Load Times',
-                    data: [0.45, 0.09, 0.1],
+                    data: [0.57, 0.16, 0.12],
                     backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                     borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                     borderWidth: 1
