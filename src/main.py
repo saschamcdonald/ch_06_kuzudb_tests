@@ -3,7 +3,7 @@ import os
 import logging
 import test_create_test_data
 import test_ingress_load_kuzudb
-import generate_index as generate_index
+
 
 
 # to make sure that all packages inside 'src' can be found by Python

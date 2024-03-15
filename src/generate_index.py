@@ -1,11 +1,14 @@
 import json
 import datetime
-import subprocess
 import os
-import re
+import shutil
+
+
 from importlib.metadata import version  # Check Python version compatibility
 
+
 kuzu_version = version("kuzu")
+
 
 # Function to generate chart.js script
 def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
@@ -63,13 +66,29 @@ def get_json_files():
     return [f for f in os.listdir('.') if f.endswith('.json')]
 
 class DashboardCreator:
-    def __init__(self, data_file=''):
-        self.data_files = get_json_files()
+    def __init__(self, data_files):
+        self.data_files = data_files
 
     def generate_dashboard(self):
+        index_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Index</title>
+</head>
+<body>
+    <h1>Dashboard Index</h1>
+    <ul>
+"""
+
+        last_dashboard_file = None
+
         for data_file in self.data_files:
             with open(data_file, 'r') as f:
                 self.data = json.load(f)
+
+            dashboard_filename = f'{data_file.replace(".json", ".html")}'
 
             execution_date = self.data.get("execution_date", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
@@ -295,10 +314,25 @@ class DashboardCreator:
 </html>
         """
 
-            with open(f'{data_file.replace(".json", ".html")}', 'w') as f:
+            with open(dashboard_filename, 'w') as f:
                 f.write(html_content)
 
+            last_dashboard_file = dashboard_filename
+
+            index_content += f'        <li><a href="{dashboard_filename}">{dashboard_filename}</a></li>\n'
+
+        index_content += """
+    </ul>
+</body>
+</html>
+"""
+        with open('index.html', 'w') as f:
+            f.write(index_content)
+
+        if last_dashboard_file:
+            shutil.copyfile(last_dashboard_file, 'index.html')
 
 if __name__ == "__main__":
-    dashboard_creator = DashboardCreator()
+    data_files = get_json_files()
+    dashboard_creator = DashboardCreator(data_files)
     dashboard_creator.generate_dashboard()

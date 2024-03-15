@@ -102,7 +102,7 @@
         <h2>Summary</h2>
         <table>
             <tr><th>Kuzu Database Version</th><td>0.2.1</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 17:49:48</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 18:20:06</td></tr>
         </table>
         <h3>Database Summary</h3>
         <table>
@@ -112,7 +112,7 @@
         <h3>Load Times</h3>
         <table>
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-<tr><td>Person</td><td>0.10251307487487793</td></tr><tr><td>Company</td><td>0.12346816062927246</td></tr><tr><td>WorksAt</td><td>0.11048388481140137</td></tr>
+<tr><td>Person</td><td>0.1180429458618164</td></tr><tr><td>Company</td><td>0.09057188034057617</td></tr><tr><td>WorksAt</td><td>0.12113690376281738</td></tr>
         </table>
     </div>
 
@@ -162,7 +162,7 @@
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table>
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.10251307487487793</td></tr><tr><td>Company</td><td>0.12346816062927246</td></tr><tr><td>WorksAt</td><td>0.11048388481140137</td></tr></table></div>
+        <tr><td>Person</td><td>0.1180429458618164</td></tr><tr><td>Company</td><td>0.09057188034057617</td></tr><tr><td>WorksAt</td><td>0.12113690376281738</td></tr></table></div>
     <script>
         var ctx = document.getElementById('loadTimeChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -171,7 +171,7 @@
                 labels: ["Person", "Company", "WorksAt"],
                 datasets: [{
                     label: 'Load Times',
-                    data: [0.1, 0.12, 0.11],
+                    data: [0.12, 0.09, 0.12],
                     backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                     borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                     borderWidth: 1

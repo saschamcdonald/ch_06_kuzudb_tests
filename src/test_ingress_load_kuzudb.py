@@ -11,7 +11,7 @@ from prettytable import PrettyTable
 from importlib.metadata import version  # Check Python version compatibility
 from io import StringIO
 
-from DashboardCreator import DashboardCreator  # Ensure DashboardCreator.py is correctly defined
+# from DashboardCreator import DashboardCreator  # Ensure DashboardCreator.py is correctly defined
 
 
 kuzu_version = version("kuzu")
