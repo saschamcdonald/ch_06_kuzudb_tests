@@ -58,11 +58,10 @@ def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     return chart_js
 
 
-
-
 # Function to find all the JSON files in the directory
 def get_json_files():
     return [f for f in os.listdir('.') if f.endswith('.json')]
+
 
 class DashboardCreator:
     def __init__(self, data_files):
@@ -112,7 +111,7 @@ class DashboardCreator:
 """
             for file in self.data_files:
                 friendly_name = file.replace(".json", "").replace("_", " ").capitalize()
-                sidebar_links_html += f'        <a href="{file.replace(".json", ".html")}" target="_blank">{friendly_name}</a>\n'
+                sidebar_links_html += f'        <a href="{file.replace(".json", ".html")}">{friendly_name}</a>\n'
 
             sidebar_links_html += "    </div>\n</div>"
 
@@ -289,7 +288,13 @@ class DashboardCreator:
             html_content += f"""
     <div id="config" class="tabcontent">
         <h2>Config: Kuzu  - {kuzu_version}</h2>
-        <p>This is the configuration tab.</p>
+        <form id="configForm">
+            <label for="open_tabs">Open Dashboards:</label><br>
+            <input type="radio" id="same_tab" name="open_tabs" value="same_tab" checked>
+            <label for="same_tab">Same Tab</label><br>
+            <input type="radio" id="separate_tabs" name="open_tabs" value="separate_tabs">
+            <label for="separate_tabs">Separate Tabs</label><br><br>
+        </form>
     </div>
 """
 
@@ -314,6 +319,20 @@ class DashboardCreator:
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.classList.add("active");
     }
+
+    // Function to handle configuration changes
+    document.getElementById("configForm").addEventListener("change", function() {
+        var tabsOption = document.querySelector('input[name="open_tabs"]:checked').value;
+        var sidebarLinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+        for (var i = 0; i < sidebarLinks.length; i++) {
+            var link = sidebarLinks[i];
+            if (tabsOption === "same_tab") {
+                link.removeAttribute("target");
+            } else {
+                link.setAttribute("target", "_blank");
+            }
+        }
+    });
 </script>
 
 </body>
@@ -325,7 +344,7 @@ class DashboardCreator:
 
             last_dashboard_file = dashboard_filename
 
-            index_content += f'        <li><a href="{dashboard_filename}" target="_blank">{dashboard_filename.replace(".html", "").replace("_", " ").capitalize()}</a></li>\n'
+            index_content += f'        <li><a href="{dashboard_filename}">{dashboard_filename.replace(".html", "").replace("_", " ").capitalize()}</a></li>\n'
 
         index_content += """
     </ul>

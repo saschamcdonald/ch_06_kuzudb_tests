@@ -65,3 +65,72 @@ canvas {
         padding: 10px;
     }
 }
+/* Define sidebar styles */
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+/* Define sidebar links styles */
+.sidebar a {
+    padding: 10px 8px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+/* Define sidebar links on hover styles */
+.sidebar a:hover {
+    background-color: #333;
+    color: #f1f1f1;
+}
+
+/* Define active tab styles */
+.sidebar a.active, .sidebar a.active:hover {
+    background-color: rgba(0, 0, 0, 0.3); /* Adjust opacity to your preference */
+    color: white;
+}
+
+/* Define tab styles */
+.tab {
+    margin-left: 250px; /* Same width as the sidebar */
+}
+
+/* Define tab content styles */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+/* Define table styles */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+th {
+    color: #111; /* Text color for title columns */
+}

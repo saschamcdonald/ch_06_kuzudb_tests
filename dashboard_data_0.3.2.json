@@ -3,17 +3,17 @@
     "load_times": [
         {
             "Table Name": "Person",
-            "Load Time (Seconds)": 0.22734785079956055,
+            "Load Time (Seconds)": 0.16660809516906738,
             "Database Summary": "1,000"
         },
         {
             "Table Name": "Company",
-            "Load Time (Seconds)": 0.18780779838562012,
+            "Load Time (Seconds)": 0.14946913719177246,
             "Database Summary": "3,000"
         },
         {
             "Table Name": "WorksAt",
-            "Load Time (Seconds)": 0.12235212326049805,
+            "Load Time (Seconds)": 0.145294189453125,
             "Database Summary": "18,000"
         }
     ],
