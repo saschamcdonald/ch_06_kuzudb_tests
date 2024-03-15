@@ -32,6 +32,14 @@ def save_data_for_dashboard(load_times, database_summary, log_stream):
     # Convert log stream to string
     logs_str = log_stream.getvalue()
 
+    # Modify load_times to include corresponding database summary info
+    for entry in load_times:
+        # Find the matching summary entry based on table/entity name
+        summary_entry = next((item for item in database_summary if item["Entity"] == entry["Table Name"]), None)
+        if summary_entry:
+            # Add the Node Count to the load_times entry
+            entry["Database Summary"] = summary_entry["Table Count"]
+
     data = {
         "load_times": load_times,
         "database_summary": database_summary,
@@ -40,6 +48,7 @@ def save_data_for_dashboard(load_times, database_summary, log_stream):
 
     with open('dashboard_data.json', 'w') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
+
 
 # Creates a CREATE NODE TABLE statement from a Parquet file
 def create_node_table_statement_from_parquet(parquet_path, table_name, primary_key):
@@ -178,12 +187,11 @@ def main():
     # Assuming this structure is needed for the dashboard
 
         database_summary = [
-            {"Entity": "Company", "Node Count": format(company_node_count, ','), "Relationship Count": "-"},
-            {"Entity": "Person", "Node Count": format(person_node_count, ','), "Relationship Count": "-"},
-            {"Entity": "WorksAt", "Node Count": format(WorksAt_rel_count, ',')}
-
-            # {"Entity": "WorksAt", "Node Count": "-", "Relationship Count": format(WorksAt_rel_count, ',')}
+            {"Entity": "Company", "Table Count": format(company_node_count, ',')},
+            {"Entity": "Person", "Table Count": format(person_node_count, ',')},
+            {"Entity": "WorksAt", "Table Count": format(WorksAt_rel_count, ',')}
         ]
+        
         
     except Exception as e:
         logging.error(f"Error compiling database summary: {e}")

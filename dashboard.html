@@ -1,44 +1,51 @@
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Dashboard</title>
-        <link rel="stylesheet" href="style.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
-    <body>
-        <h1>Dashboard</h1>
-    <div class="resizable-chart"><h2>Load Times</h2><canvas id="loadTimeChart"></canvas></div>
-<script>
-            var ctx = document.getElementById('loadTimeChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Person", "Company", "WorksAt"],
-                    datasets: [{
-                        label: 'Load Times',
-                        data: [0.10190486907958984, 0.09759688377380371, 0.0857090950012207],
-                        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
-                        borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true, // This is important
-                }
-            });
-        </script>
-<div class="resizable-chart"><h2>Database Summary</h2><canvas id="summaryChart"></canvas></div>
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Define table styles */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-family: Arial, sans-serif;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <table>
+        <tr><th>Kuzu Database Version</th><td>0.3.2</td></tr>
+        <tr><th>Date of Execution</th><td>2024-03-15 14:20:09</td></tr>
+    </table><br>
+<div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
+        <script>
             var ctx = document.getElementById('summaryChart').getContext('2d');
-            new Chart(ctx, {
+            var myChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: ["Company", "Person", "WorksAt"],
                     datasets: [{
-                        label: 'Database Entities',
+                        label: 'Database Summary',
                         data: [3000, 1000, 18000],
                         backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                         borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
@@ -47,40 +54,68 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true, // This is important
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                    return label;
+                                }
+                            }
+                        }
+                    }
                 }
             });
         </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.resizable-chart').forEach(function(chartContainer) {
-            const resizeHandle = document.createElement('div');
-            resizeHandle.className = 'resize-handle';
-            chartContainer.appendChild(resizeHandle);
-            
-            resizeHandle.addEventListener('mousedown', function(e) {
-                e.preventDefault();
-                let startX = e.clientX;
-                let startY = e.clientY;
-                let startWidth = chartContainer.offsetWidth;
-                let startHeight = chartContainer.offsetHeight;
-                
-                function doDrag(e) {
-                    chartContainer.style.width = startWidth + e.clientX - startX + 'px';
-                    chartContainer.style.height = startHeight + e.clientY - startY + 'px';
+        
+            <h2>Database Summary</h2>
+            <table>
+                <tr><th>Entity</th><th>Table Count</th></tr>
+            <tr><td>Company</td><td>3,000</td></tr><tr><td>Person</td><td>1,000</td></tr><tr><td>WorksAt</td><td>18,000</td></tr></table><br><div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
+        <script>
+            var ctx = document.getElementById('loadTimeChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Person", "Company", "WorksAt"],
+                    datasets: [{
+                        label: 'Load Times',
+                        data: [0.11, 0.08, 0.08],
+                        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                        borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                    return label;
+                                }
+                            }
+                        }
+                    }
                 }
-                
-                function stopDrag() {
-                    document.documentElement.removeEventListener('mousemove', doDrag, false);
-                    document.documentElement.removeEventListener('mouseup', stopDrag, false);
-                }
-                
-                document.documentElement.addEventListener('mousemove', doDrag, false);
-                document.documentElement.addEventListener('mouseup', stopDrag, false);
-            }, false);
-        });
-    });
+            });
         </script>
-    </body>
-    </html>
+        
+            <h2>Load Times</h2>
+            <table>
+                <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
+            <tr><td>Person</td><td>0.10911107063293457</td></tr><tr><td>Company</td><td>0.08328390121459961</td></tr><tr><td>WorksAt</td><td>0.07754707336425781</td></tr></table><br>
+</body>
+</html>
         
