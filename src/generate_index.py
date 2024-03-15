@@ -202,9 +202,9 @@ class DashboardCreator:
             # Summary Tab Content
             html_content += f"""
     <div id="summary" class="tabcontent">
-        <h2>Summary</h2>
+        <h2>Summary Kuzu - {kuzu_version}</h2>
         <table style="background-color: #f0f0f0;">
-            <tr><th>Kuzu Database Version</th><td>{kuzu_version}</td></tr>
+            <tr><th>Kuzu Version</th><td>{kuzu_version}</td></tr>
             <tr><th>Date of Execution</th><td>{execution_date}</td></tr>
         </table>
         <h3>Database Summary</h3>
@@ -219,9 +219,9 @@ class DashboardCreator:
                     summary_dict[entity] = node_count
                     html_content += f'<tr><td>{entity}</td><td>{node_count:,}</td></tr>'
 
-            html_content += """
+            html_content += f"""
         </table>
-        <h3>Load Times</h3>
+        <h3>Load Times: Kuzu - {kuzu_version}</h3>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
 """
@@ -248,7 +248,7 @@ class DashboardCreator:
                 # Database Summary Tab Content
                 html_content += f"""
     <div id="database_summary" class="tabcontent">
-        <h2>Database Summary</h2>
+        <h2>Database Summary: Kuzu - {kuzu_version}</h2>
         <div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
         <table style="background-color: #f8f8f8;">
             <tr><th>Entity</th><th>Table Count</th></tr>
@@ -268,7 +268,7 @@ class DashboardCreator:
                 # Load Times Tab Content
                 html_content += f"""
     <div id="load_times" class="tabcontent">
-        <h2>Load Times</h2>
+        <h2>Load Times: Kuzu Version - {kuzu_version}</h2>
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
@@ -280,9 +280,9 @@ class DashboardCreator:
                 html_content += generate_chart_js("loadTimeChart", "bar", load_time_labels, load_time_values, "Load Times")
 
             # Config Tab Content
-            html_content += """
+            html_content += f"""
     <div id="config" class="tabcontent">
-        <h2>Config</h2>
+        <h2>Config: Kuzu  - {kuzu_version}</h2>
         <p>This is the configuration tab.</p>
     </div>
 """
