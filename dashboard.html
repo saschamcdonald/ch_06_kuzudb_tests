@@ -7,37 +7,80 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Define table styles */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            border: 1px solid #ddd;
-            font-family: Arial, sans-serif;
+        /* Define sidebar styles */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
         }
         
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        /* Define sidebar links styles */
+        .sidebar a {
+            padding: 10px 8px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
         }
         
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        /* Define sidebar links on hover styles */
+        .sidebar a:hover {
+            color: #f1f1f1;
         }
-        
-        th {
+
+        /* Define active tab links styles */
+        .sidebar a.active {
             background-color: #4CAF50;
             color: white;
+        }
+        
+        /* Define tab styles */
+        .tab {
+            margin-left: 250px; /* Same width as the sidebar */
+        }
+
+        /* Define tab content styles */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
         }
     </style>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <table>
-        <tr><th>Kuzu Database Version</th><td>0.3.2</td></tr>
-        <tr><th>Date of Execution</th><td>2024-03-15 14:20:09</td></tr>
-    </table><br>
-<div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <a href="#" class="active" onmouseover="highlightItem(this)" onclick="openTab(event, 'summary')">Summary</a>
+    <a href="#" onmouseover="highlightItem(this)" onclick="openTab(event, 'database_summary')">Database Summary</a>
+    <a href="#" onmouseover="highlightItem(this)" onclick="openTab(event, 'load_times')">Load Times</a>
+</div>
+
+<!-- Main content -->
+<div class="tab">
+
+    <div id="summary" class="tabcontent">
+        <h2>Summary</h2>
+        <table>
+            <tr><th>Kuzu Database Version</th><td>0.3.2</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 14:56:31</td></tr>
+        </table>
+    </div>
+
+    <div id="database_summary" class="tabcontent">
+        <h2>Database Summary</h2>
+        <div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
+        <table>
+            <tr><th>Entity</th><th>Table Count</th></tr>
+        <tr><td>Company</td><td>3,000</td></tr><tr><td>Person</td><td>1,000</td></tr><tr><td>WorksAt</td><td>18,000</td></tr></table></div>
         <script>
             var ctx = document.getElementById('summaryChart').getContext('2d');
             var myChart = new Chart(ctx, {
@@ -73,10 +116,12 @@
             });
         </script>
         
-            <h2>Database Summary</h2>
-            <table>
-                <tr><th>Entity</th><th>Table Count</th></tr>
-            <tr><td>Company</td><td>3,000</td></tr><tr><td>Person</td><td>1,000</td></tr><tr><td>WorksAt</td><td>18,000</td></tr></table><br><div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
+    <div id="load_times" class="tabcontent">
+        <h2>Load Times</h2>
+        <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
+        <table>
+            <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
+        <tr><td>Person</td><td>0.5432009696960449</td></tr><tr><td>Company</td><td>0.4439539909362793</td></tr><tr><td>WorksAt</td><td>0.34135890007019043</td></tr></table></div>
         <script>
             var ctx = document.getElementById('loadTimeChart').getContext('2d');
             var myChart = new Chart(ctx, {
@@ -85,7 +130,7 @@
                     labels: ["Person", "Company", "WorksAt"],
                     datasets: [{
                         label: 'Load Times',
-                        data: [0.11, 0.08, 0.08],
+                        data: [0.54, 0.44, 0.34],
                         backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                         borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                         borderWidth: 1
@@ -112,10 +157,37 @@
             });
         </script>
         
-            <h2>Load Times</h2>
-            <table>
-                <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-            <tr><td>Person</td><td>0.10911107063293457</td></tr><tr><td>Company</td><td>0.08328390121459961</td></tr><tr><td>WorksAt</td><td>0.07754707336425781</td></tr></table><br>
+</div>
+
+<script>
+    // Open the default tab when the page loads
+    document.getElementById("summary").style.display = "block";
+
+    // Function to switch between tabs
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // Function to highlight sidebar item on mouseover and when selected
+    function highlightItem(elem) {
+        var tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+        for (var i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        elem.classList.add("active");
+    }
+</script>
+
 </body>
 </html>
         

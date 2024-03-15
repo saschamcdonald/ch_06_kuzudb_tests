@@ -89,36 +89,91 @@ class DashboardCreator:
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Define table styles */
-        table {{
-            border-collapse: collapse;
-            width: 100%;
-            border: 1px solid #ddd;
-            font-family: Arial, sans-serif;
+        /* Define sidebar styles */
+        .sidebar {{
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
         }}
         
-        th, td {{
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        /* Define sidebar links styles */
+        .sidebar a {{
+            padding: 10px 8px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
         }}
         
-        tr:nth-child(even) {{
-            background-color: #f2f2f2;
-        }}
-        
-        th {{
+        /* Define active tab links styles */
+        .sidebar a.active {{
             background-color: #4CAF50;
             color: white;
+        }}
+        
+        /* Define sidebar links on hover styles */
+        .sidebar a:hover {{
+            color: #f1f1f1;
+        }}
+
+        /* Define tab styles */
+        .tab {{
+            margin-left: 250px; /* Same width as the sidebar */
+        }}
+
+        /* Define tab button styles */
+        .tab button {{
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }}
+
+        /* Define active tab button styles */
+        .tab button.active {{
+            background-color: #ddd;
+        }}
+
+        /* Define tab content styles */
+        .tabcontent {{
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
         }}
     </style>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <table>
-        <tr><th>Kuzu Database Version</th><td>{kuzu_version}</td></tr>
-        <tr><th>Date of Execution</th><td>{execution_date}</td></tr>
-    </table><br>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <a class="active" href="#" onclick="openTab(event, 'summary')">Summary</a>
+    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+</div>
+
+<!-- Main content -->
+<div class="tab">
+"""
+
+        # Summary Tab Content
+        html_content += f"""
+    <div id="summary" class="tabcontent">
+        <h2>Summary</h2>
+        <table>
+            <tr><th>Kuzu Database Version</th><td>{kuzu_version}</td></tr>
+            <tr><th>Date of Execution</th><td>{execution_date}</td></tr>
+        </table>
+    </div>
 """
 
         if "database_summary" in self.data:
@@ -130,17 +185,19 @@ class DashboardCreator:
             summary_labels = list(summary_dict.keys())
             summary_data = list(summary_dict.values())
 
-            html_content += f'<div class="chart-container"><canvas id="summaryChart"></canvas></div><br>'
-            html_content += self.generate_chart_js("summaryChart", "pie", summary_labels, summary_data, "Database Summary")
-
-            html_content += """
-            <h2>Database Summary</h2>
-            <table>
-                <tr><th>Entity</th><th>Table Count</th></tr>
-            """
+            # Database Summary Tab Content
+            html_content += f"""
+    <div id="database_summary" class="tabcontent">
+        <h2>Database Summary</h2>
+        <div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
+        <table>
+            <tr><th>Entity</th><th>Table Count</th></tr>
+        """
             for entity, count in summary_dict.items():
                 html_content += f'<tr><td>{entity}</td><td>{count:,}</td></tr>'
-            html_content += '</table><br>'
+            html_content += '</table></div>'
+
+            html_content += self.generate_chart_js("summaryChart", "pie", summary_labels, summary_data, "Database Summary")
 
         if "load_times" in self.data:
             load_time_data = self.data["load_times"]
@@ -148,19 +205,43 @@ class DashboardCreator:
             load_time_labels = [item["Table Name"] for item in load_time_data]
             load_time_values = [round(float(item["Load Time (Seconds)"]), 2) for item in load_time_data]
 
-            html_content += f'<div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>'
-            html_content += self.generate_chart_js("loadTimeChart", "bar", load_time_labels, load_time_values, "Load Times")
-
-            html_content += """
-            <h2>Load Times</h2>
-            <table>
-                <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-            """
+            # Load Times Tab Content
+            html_content += f"""
+    <div id="load_times" class="tabcontent">
+        <h2>Load Times</h2>
+        <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
+        <table>
+            <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
+        """
             for item in load_time_data:
                 html_content += f'<tr><td>{item["Table Name"]}</td><td>{item["Load Time (Seconds)"]}</td></tr>'
-            html_content += '</table><br>'
+            html_content += '</table></div>'
+
+            html_content += self.generate_chart_js("loadTimeChart", "bar", load_time_labels, load_time_values, "Load Times")
 
         html_content += """
+</div>
+
+<script>
+    // Open the default tab when the page loads
+    document.getElementById("summary").style.display = "block";
+
+    // Function to switch between tabs
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
 </body>
 </html>
         """
