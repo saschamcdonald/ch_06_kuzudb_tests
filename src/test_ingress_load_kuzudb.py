@@ -13,6 +13,7 @@ from io import StringIO
 
 from DashboardCreator import DashboardCreator  # Ensure DashboardCreator.py is correctly defined
 
+
 kuzu_version = version("kuzu")
 DATABASE_NAME = f'test_kuzu_db_v{kuzu_version.replace(".", "_")}'
 # Update setup_logging to capture log messages for the HTML report

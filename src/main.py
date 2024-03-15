@@ -3,7 +3,7 @@ import os
 import logging
 import test_create_test_data
 import test_ingress_load_kuzudb
-
+import generate_index as generate_index
 
 
 # to make sure that all packages inside 'src' can be found by Python
@@ -32,6 +32,7 @@ def main():
         logging.error(f"An error occurred while processing Kuzu test data: {e}")
         # Optionally, exit the script if you don't want to proceed after a failure
         sys.exit(1)
+
 
     logging.info("Game Over...")
 

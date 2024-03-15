@@ -1,11 +1,68 @@
 import json
 import datetime
 import subprocess
-import kuzu_version_checker as kuzu_version_checker
+import os
+import re
 from importlib.metadata import version  # Check Python version compatibility
+
 
 kuzu_version = version("kuzu")
 
+# Function to generate chart.js script
+def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
+    backgroundColors = [
+        'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'
+    ]
+    borderColors = [
+        'rgba(255,99,132,1)', 'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+    ]
+
+    chart_js = f"""
+    <script>
+        var ctx = document.getElementById('{chart_id}').getContext('2d');
+        var myChart = new Chart(ctx, {{
+            type: '{chart_type}',
+            data: {{
+                labels: {json.dumps(labels)},
+                datasets: [{{
+                    label: '{dataset_label}',
+                    data: {json.dumps(data)},
+                    backgroundColor: {json.dumps(backgroundColors)},
+                    borderColor: {json.dumps(borderColors)},
+                    borderWidth: 1
+                }}]
+            }},
+            options: {{
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {{
+                    tooltip: {{
+                        callbacks: {{
+                            label: function(context) {{
+                                var label = context.label || '';
+                                if (label) {{
+                                    label += ': ';
+                                }}
+                                label += context.raw.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ",");
+                                return label;
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        }});
+    </script>
+    """
+    return chart_js
+
+# Function to find all the HTML files in the directory except the current file
+def get_dashboard_links(exclude_file):
+    files = [f for f in os.listdir('.') if f.endswith('.html') and f != exclude_file]
+    return sorted(files)
 
 def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     backgroundColors = [
@@ -59,20 +116,40 @@ def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
 
 
 class DashboardCreator:
-
     def __init__(self, data_file=f'dashboard_data_{kuzu_version}.json'):
         with open(data_file, 'r') as f:
             self.data = json.load(f)
 
     def generate_dashboard(self):
-       
+        dashboard_filename = f'dashboard_{kuzu_version}.html'
+        other_dashboards = get_dashboard_links(dashboard_filename)
         execution_date = self.data.get("execution_date", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
         summary_dict = {}
         load_time_data = []
+        
 
-        html_content = f"""
-<!DOCTYPE html>
+        sidebar_links_html = """
+<div class="sidebar">
+    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
+    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+    <a href="#" onclick="openTab(event, 'config')">Config</a>
+    <div class="other-dashboards">
+        <p>Other Dashboards</p>
+"""
+        this_file = f'dashboard_{kuzu_version}.html'
+        friendly_name = this_file.replace("dashboard_", "Kuzu_").replace(".html", "").replace("_", " ").capitalize()
+        sidebar_links_html += f'        <a href="{this_file}">{friendly_name}</a>\n'
+        for file in other_dashboards:
+            friendly_name = file.replace("dashboard_", "Kuzu_").replace(".html", "").replace("_", " ").capitalize()
+            sidebar_links_html += f'        <a href="{file}">{friendly_name}</a>\n'
+
+
+
+        sidebar_links_html += "    </div>\n</div>"
+
+        html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -155,12 +232,7 @@ class DashboardCreator:
 <body>
 
 <!-- Sidebar -->
-<div class="sidebar">
-    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
-    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
-    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
-    <a href="#" onclick="openTab(event, 'config')">Config</a>
-</div>
+{ sidebar_links_html }
 
 <!-- Main content -->
 <div class="tab">
@@ -293,7 +365,7 @@ class DashboardCreator:
 </html>
         """
 
-        with open('dashboard.html', 'w') as f:
+        with open(f'dashboard_{kuzu_version}.html', 'w') as f:
             f.write(html_content)
 
 

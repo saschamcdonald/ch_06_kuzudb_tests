@@ -101,12 +101,14 @@ eval "$(pyenv virtualenv-init -)"
 
 # Array of KuzuDB versions to test, focusing on "latest" as specified
 # versions=("0.0.12")
-versions=("latest")
+# versions=("latest")
 # versions=("0.0.11")
-# versions=("0.0.11" "0.2.1" "latest")
+versions=("0.0.11" "0.2.1" "latest")
 # Iterate over versions and test each one
 for version in "${versions[@]}"; do
     test_kuzu_version "$version"
 done
+python3 src/generate_index.py
+
 
 echo "All tests completed."

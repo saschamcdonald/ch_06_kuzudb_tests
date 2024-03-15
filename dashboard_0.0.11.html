@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,11 +81,16 @@
 <body>
 
 <!-- Sidebar -->
+
 <div class="sidebar">
     <a href="#" onclick="openTab(event, 'summary')">Summary</a>
     <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
     <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
     <a href="#" onclick="openTab(event, 'config')">Config</a>
+    <div class="other-dashboards">
+        <p>Other Dashboards</p>
+        <a href="dashboard_0.0.11.html">Kuzu 0.0.11</a>
+    </div>
 </div>
 
 <!-- Main content -->
@@ -95,8 +99,8 @@
     <div id="summary" class="tabcontent">
         <h2>Summary</h2>
         <table>
-            <tr><th>Kuzu Database Version</th><td>0.3.2</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 16:12:59</td></tr>
+            <tr><th>Kuzu Database Version</th><td>0.0.11</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 17:24:50</td></tr>
         </table>
         <h3>Database Summary</h3>
         <table>
@@ -106,15 +110,15 @@
         <h3>Load Times</h3>
         <table>
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-<tr><td>Person</td><td>0.3337399959564209</td></tr><tr><td>Company</td><td>0.16772103309631348</td></tr><tr><td>WorksAt</td><td>0.28122377395629883</td></tr>
+<tr><td>Person</td><td>0.26275110244750977</td></tr><tr><td>Company</td><td>0.10202598571777344</td></tr><tr><td>WorksAt</td><td>0.11468195915222168</td></tr>
         </table>
     </div>
 
     <div id="summary" class="tabcontent">
         <h2>Summary</h2>
         <table>
-            <tr><th>Kuzu Database Version</th><td>0.3.2</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 16:12:59</td></tr>
+            <tr><th>Kuzu Database Version</th><td>0.0.11</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 17:24:50</td></tr>
         </table>
     </div>
 
@@ -164,7 +168,7 @@
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table>
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.3337399959564209</td></tr><tr><td>Company</td><td>0.16772103309631348</td></tr><tr><td>WorksAt</td><td>0.28122377395629883</td></tr></table></div>
+        <tr><td>Person</td><td>0.26275110244750977</td></tr><tr><td>Company</td><td>0.10202598571777344</td></tr><tr><td>WorksAt</td><td>0.11468195915222168</td></tr></table></div>
     <script>
         var ctx = document.getElementById('loadTimeChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -173,7 +177,7 @@
                 labels: ["Person", "Company", "WorksAt"],
                 datasets: [{
                     label: 'Load Times',
-                    data: [0.33, 0.17, 0.28],
+                    data: [0.26, 0.1, 0.11],
                     backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                     borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                     borderWidth: 1
