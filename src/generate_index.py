@@ -57,35 +57,22 @@ def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     """
     return chart_js
 
+
+# Function to find all the JSON files in the directory
+def get_json_files():
+    return [f for f in os.listdir('.') if f.endswith('.json')]
+
+
 class DashboardCreator:
     def __init__(self, data_files):
         self.data_files = data_files
-        # Initialize properties to store aggregated data
-        self.summary_data_all = {}
-        self.load_times_all = {}
 
-    # Function to find all the JSON files in the directory
-    def get_json_files(self):
-        return [f for f in os.listdir('.') if f.endswith('.json')]
-
-    def generate_chart_js(self, chart_id, chart_type, labels, data, dataset_label):
-        return generate_chart_js(chart_id, chart_type, labels, data, dataset_label)
-
-    def generate_sidebar_menu(self, comparison_link):
-        sidebar_links_html = """
-<div class="sidebar">
-    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
-    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
-    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
-    <a href="#" onclick="openTab(event, 'config')">Config</a>
-"""
-
-        if comparison_link:
-            sidebar_links_html += f'    <a href="{comparison_link}" target="_blank">Comparison</a>\n'
-
-        sidebar_links_html += """</div>"""
-
-        return sidebar_links_html
+    def generate_color(self, filename):
+        hash_value = hashlib.md5(filename.encode()).hexdigest()
+        r = int(hash_value[:2], 16)
+        g = int(hash_value[2:4], 16)
+        b = int(hash_value[4:6], 16)
+        return f'rgba({r}, {g}, {b}, 0.3)'
 
     def generate_dashboard(self):
         index_content = """
@@ -113,7 +100,20 @@ class DashboardCreator:
             summary_dict = {}
             load_time_data = []
 
-            sidebar_links_html = self.generate_sidebar_menu(None)
+            sidebar_links_html = """
+<div class="sidebar">
+    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
+    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+    <a href="#" onclick="openTab(event, 'config')">Config</a>
+    <div class="other-dashboards">
+        <p>Other Dashboards</p>
+"""
+            for file in self.data_files:
+                friendly_name = file.replace(".json", "").replace("_", " ").capitalize()
+                sidebar_links_html += f'        <a href="{file.replace(".json", ".html")}">{friendly_name}</a>\n'
+
+            sidebar_links_html += "    </div>\n</div>"
 
             html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -262,7 +262,7 @@ class DashboardCreator:
                     html_content += f'<tr><td>{entity}</td><td>{count:,}</td></tr>'
                 html_content += '</table></div>'
 
-                html_content += self.generate_chart_js("summaryChart", "pie", summary_labels, summary_data, "Database Summary")
+                html_content += generate_chart_js("summaryChart", "pie", summary_labels, summary_data, "Database Summary")
 
             if "load_times" in self.data:
                 load_time_data = self.data["load_times"]
@@ -282,7 +282,7 @@ class DashboardCreator:
                     html_content += f'<tr><td>{item["Table Name"]}</td><td>{item["Load Time (Seconds)"]}</td></tr>'
                 html_content += '</table></div>'
 
-                html_content += self.generate_chart_js("loadTimeChart", "bar", load_time_labels, load_time_values, "Load Times")
+                html_content += generate_chart_js("loadTimeChart", "bar", load_time_labels, load_time_values, "Load Times")
 
             # Config Tab Content
             html_content += f"""
@@ -357,46 +357,8 @@ class DashboardCreator:
         if last_dashboard_file:
             shutil.copyfile(last_dashboard_file, 'index.html')
 
-    def generate_comparison_page(self):
-        comparison_html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard Comparison</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Add necessary CSS styles for the comparison page */
-    </style>
-</head>
-<body>
-    <h1>Dashboard Comparison</h1>
-    <!-- Add sidebar menu -->
-    {self.generate_sidebar_menu('comparison.html')}
-    <!-- Add comparison charts here -->
-"""
-
-        # Generate comparison charts
-        summary_labels = list(self.summary_data_all.keys())
-        summary_data = [sum(data) for data in self.summary_data_all.values()]
-
-        load_time_labels = list(self.load_times_all.keys())
-        load_time_values = [sum(data) for data in self.load_times_all.values()]
-
-        comparison_html_content += self.generate_chart_js("summaryChart", "bar", summary_labels, summary_data, "Summary")
-        comparison_html_content += self.generate_chart_js("loadTimeChart", "bar", load_time_labels, load_time_values, "Load Times")
-
-        comparison_html_content += """
-</body>
-</html>
-"""
-
-        with open('comparison.html', 'w') as f:
-            f.write(comparison_html_content)
 
 if __name__ == "__main__":
-    dashboard_creator = DashboardCreator([])
-    data_files = dashboard_creator.get_json_files()
+    data_files = get_json_files()
+    dashboard_creator = DashboardCreator(data_files)
     dashboard_creator.generate_dashboard()
-    dashboard_creator.generate_comparison_page()  # Generate the comparison page
-

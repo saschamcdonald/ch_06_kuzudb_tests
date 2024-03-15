@@ -89,7 +89,6 @@
     <div class="other-dashboards">
         <p>Other Dashboards</p>
         <a href="dashboard_data_0.2.1.html">Dashboard data 0.2.1</a>
-        <a href="aggregated_comparison.html">Aggregated comparison</a>
         <a href="dashboard_data_0.3.2.html">Dashboard data 0.3.2</a>
         <a href="dashboard_data_0.0.11.html">Dashboard data 0.0.11</a>
     </div>
@@ -102,7 +101,7 @@
         <h2>Summary Kuzu - 0.2.1</h2>
         <table style="background-color: rgba(165, 214, 127, 0.3);">
             <tr><th>Kuzu Version</th><td>0.2.1</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 21:37:59</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 21:40:10</td></tr>
         </table>
         <h3>Database Summary</h3>
         <table style="background-color: #f8f8f8;">
@@ -112,7 +111,7 @@
         <h3>Load Times: Kuzu - 0.2.1</h3>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-<tr><td>Person</td><td>0.12468719482421875</td></tr><tr><td>Company</td><td>0.15056800842285156</td></tr><tr><td>WorksAt</td><td>0.17710208892822266</td></tr>
+<tr><td>Person</td><td>0.1378040313720703</td></tr><tr><td>Company</td><td>0.26365184783935547</td></tr><tr><td>WorksAt</td><td>0.1928997039794922</td></tr>
         </table>
     </div>
 
@@ -162,7 +161,7 @@
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.12468719482421875</td></tr><tr><td>Company</td><td>0.15056800842285156</td></tr><tr><td>WorksAt</td><td>0.17710208892822266</td></tr></table></div>
+        <tr><td>Person</td><td>0.1378040313720703</td></tr><tr><td>Company</td><td>0.26365184783935547</td></tr><tr><td>WorksAt</td><td>0.1928997039794922</td></tr></table></div>
     <script>
         var ctx = document.getElementById('loadTimeChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -171,7 +170,7 @@
                 labels: ["Person", "Company", "WorksAt"],
                 datasets: [{
                     label: 'Load Times',
-                    data: [0.12, 0.15, 0.18],
+                    data: [0.14, 0.26, 0.19],
                     backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                     borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                     borderWidth: 1
