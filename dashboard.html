@@ -27,20 +27,21 @@
             font-size: 20px;
             color: #818181;
             display: block;
-            transition: 0.3s;
+            transition: background-color 0.3s;
         }
         
         /* Define sidebar links on hover styles */
         .sidebar a:hover {
+            background-color: #333;
             color: #f1f1f1;
         }
 
-        /* Define active tab links styles */
-        .sidebar a.active {
+        /* Define active tab styles */
+        .sidebar a.active, .sidebar a.active:hover {
             background-color: #4CAF50;
             color: white;
         }
-        
+
         /* Define tab styles */
         .tab {
             margin-left: 250px; /* Same width as the sidebar */
@@ -53,15 +54,39 @@
             border: 1px solid #ccc;
             border-top: none;
         }
+        
+        /* Define table styles */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-family: Arial, sans-serif;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <a href="#" class="active" onmouseover="highlightItem(this)" onclick="openTab(event, 'summary')">Summary</a>
-    <a href="#" onmouseover="highlightItem(this)" onclick="openTab(event, 'database_summary')">Database Summary</a>
-    <a href="#" onmouseover="highlightItem(this)" onclick="openTab(event, 'load_times')">Load Times</a>
+    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
+    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+    <a href="#" onclick="openTab(event, 'config')">Config</a>
 </div>
 
 <!-- Main content -->
@@ -71,7 +96,25 @@
         <h2>Summary</h2>
         <table>
             <tr><th>Kuzu Database Version</th><td>0.3.2</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 14:56:31</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 15:14:52</td></tr>
+        </table>
+        <h3>Database Summary</h3>
+        <table>
+            <tr><th>Entity</th><th>Table Count</th></tr>
+<tr><td>Company</td><td>3,000</td></tr><tr><td>Person</td><td>1,000</td></tr><tr><td>WorksAt</td><td>18,000</td></tr>
+        </table>
+        <h3>Load Times</h3>
+        <table>
+            <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
+<tr><td>Person</td><td>0.22402596473693848</td></tr><tr><td>Company</td><td>0.13691306114196777</td></tr><tr><td>WorksAt</td><td>0.1312251091003418</td></tr>
+        </table>
+    </div>
+
+    <div id="summary" class="tabcontent">
+        <h2>Summary</h2>
+        <table>
+            <tr><th>Kuzu Database Version</th><td>0.3.2</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 15:14:52</td></tr>
         </table>
     </div>
 
@@ -81,82 +124,87 @@
         <table>
             <tr><th>Entity</th><th>Table Count</th></tr>
         <tr><td>Company</td><td>3,000</td></tr><tr><td>Person</td><td>1,000</td></tr><tr><td>WorksAt</td><td>18,000</td></tr></table></div>
-        <script>
-            var ctx = document.getElementById('summaryChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ["Company", "Person", "WorksAt"],
-                    datasets: [{
-                        label: 'Database Summary',
-                        data: [3000, 1000, 18000],
-                        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
-                        borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    var label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
-                                    return label;
+    <script>
+        var ctx = document.getElementById('summaryChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ["Company", "Person", "WorksAt"],
+                datasets: [{
+                    label: 'Database Summary',
+                    data: [3000, 1000, 18000],
+                    backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                    borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
                                 }
+                                label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                return label;
                             }
                         }
                     }
                 }
-            });
-        </script>
-        
+            }
+        });
+    </script>
+    
     <div id="load_times" class="tabcontent">
         <h2>Load Times</h2>
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table>
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.5432009696960449</td></tr><tr><td>Company</td><td>0.4439539909362793</td></tr><tr><td>WorksAt</td><td>0.34135890007019043</td></tr></table></div>
-        <script>
-            var ctx = document.getElementById('loadTimeChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Person", "Company", "WorksAt"],
-                    datasets: [{
-                        label: 'Load Times',
-                        data: [0.54, 0.44, 0.34],
-                        backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
-                        borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    var label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
-                                    return label;
+        <tr><td>Person</td><td>0.22402596473693848</td></tr><tr><td>Company</td><td>0.13691306114196777</td></tr><tr><td>WorksAt</td><td>0.1312251091003418</td></tr></table></div>
+    <script>
+        var ctx = document.getElementById('loadTimeChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Person", "Company", "WorksAt"],
+                datasets: [{
+                    label: 'Load Times',
+                    data: [0.22, 0.14, 0.13],
+                    backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                    borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
                                 }
+                                label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                return label;
                             }
                         }
                     }
                 }
-            });
-        </script>
-        
+            }
+        });
+    </script>
+    
+    <div id="config" class="tabcontent">
+        <h2>Config</h2>
+        <p>This is the configuration tab.</p>
+    </div>
+
 </div>
 
 <script>
@@ -172,19 +220,10 @@
         }
         tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
         for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
-    // Function to highlight sidebar item on mouseover and when selected
-    function highlightItem(elem) {
-        var tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
-        for (var i = 0; i < tablinks.length; i++) {
             tablinks[i].classList.remove("active");
         }
-        elem.classList.add("active");
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.classList.add("active");
     }
 </script>
 
