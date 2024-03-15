@@ -86,6 +86,7 @@
     <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
     <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
     <a href="#" onclick="openTab(event, 'config')">Config</a>
+    <a href="comparison.html">Comparison</a>
     <div class="other-dashboards">
         <p>Other Dashboards</p>
         <a href="dashboard_data_0.2.1.html">Dashboard data 0.2.1</a>
@@ -101,7 +102,7 @@
         <h2>Summary Kuzu - 0.3.2</h2>
         <table style="background-color: rgba(31, 239, 60, 0.3);">
             <tr><th>Kuzu Version</th><td>0.3.2</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 20:19:29</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 21:12:40</td></tr>
         </table>
         <h3>Database Summary</h3>
         <table style="background-color: #f8f8f8;">
@@ -111,7 +112,7 @@
         <h3>Load Times: Kuzu - 0.3.2</h3>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-<tr><td>Person</td><td>0.16660809516906738</td></tr><tr><td>Company</td><td>0.14946913719177246</td></tr><tr><td>WorksAt</td><td>0.145294189453125</td></tr>
+<tr><td>Person</td><td>0.23172903060913086</td></tr><tr><td>Company</td><td>0.15263104438781738</td></tr><tr><td>WorksAt</td><td>0.12649297714233398</td></tr>
         </table>
     </div>
 
@@ -161,7 +162,7 @@
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.16660809516906738</td></tr><tr><td>Company</td><td>0.14946913719177246</td></tr><tr><td>WorksAt</td><td>0.145294189453125</td></tr></table></div>
+        <tr><td>Person</td><td>0.23172903060913086</td></tr><tr><td>Company</td><td>0.15263104438781738</td></tr><tr><td>WorksAt</td><td>0.12649297714233398</td></tr></table></div>
     <script>
         var ctx = document.getElementById('loadTimeChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -170,7 +171,7 @@
                 labels: ["Person", "Company", "WorksAt"],
                 datasets: [{
                     label: 'Load Times',
-                    data: [0.17, 0.15, 0.15],
+                    data: [0.23, 0.15, 0.13],
                     backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                     borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                     borderWidth: 1
@@ -223,27 +224,12 @@
         }
         tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
         for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
         document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.classList.add("active");
+        evt.currentTarget.className += " active";
     }
-
-    // Function to handle configuration changes
-    document.getElementById("configForm").addEventListener("change", function() {
-        var tabsOption = document.querySelector('input[name="open_tabs"]:checked').value;
-        var sidebarLinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
-        for (var i = 0; i < sidebarLinks.length; i++) {
-            var link = sidebarLinks[i];
-            if (tabsOption === "same_tab") {
-                link.removeAttribute("target");
-            } else {
-                link.setAttribute("target", "_blank");
-            }
-        }
-    });
 </script>
 
 </body>
 </html>
-        

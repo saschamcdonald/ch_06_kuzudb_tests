@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Comparison</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Add necessary CSS styles for the comparison page */
+    </style>
+</head>
+<body>
+    <h1>Dashboard Comparison</h1>
+    <!-- Add sidebar menu -->
+    
+<div class="sidebar">
+    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
+    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+    <a href="#" onclick="openTab(event, 'config')">Config</a>
+    <a href="comparison.html" target="_blank">Comparison</a>
+</div>
+    <!-- Add comparison charts here -->
+
+    <script>
+        var ctx = document.getElementById('summaryChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Summary',
+                    data: [],
+                    backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                    borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <script>
+        var ctx = document.getElementById('loadTimeChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Load Times',
+                    data: [],
+                    backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                    borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>
