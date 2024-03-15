@@ -1,18 +1,19 @@
 {
+    "kuzu": "0.3.2",
     "load_times": [
         {
             "Table Name": "Person",
-            "Load Time (Seconds)": 0.1180429458618164,
+            "Load Time (Seconds)": 0.4463918209075928,
             "Database Summary": "1,000"
         },
         {
             "Table Name": "Company",
-            "Load Time (Seconds)": 0.09057188034057617,
+            "Load Time (Seconds)": 0.10748505592346191,
             "Database Summary": "3,000"
         },
         {
             "Table Name": "WorksAt",
-            "Load Time (Seconds)": 0.12113690376281738,
+            "Load Time (Seconds)": 0.1404280662536621,
             "Database Summary": "18,000"
         }
     ],

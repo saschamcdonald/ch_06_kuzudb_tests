@@ -11,7 +11,6 @@ from prettytable import PrettyTable
 from importlib.metadata import version  # Check Python version compatibility
 from io import StringIO
 
-# from DashboardCreator import DashboardCreator  # Ensure DashboardCreator.py is correctly defined
 
 
 kuzu_version = version("kuzu")
@@ -44,6 +43,7 @@ def save_data_for_dashboard(load_times, database_summary, log_stream):
             entry["Database Summary"] = summary_entry["Table Count"]
 
     data = {
+        "kuzu": kuzu_version,
         "load_times": load_times,
         "database_summary": database_summary,
         "logs": logs_str

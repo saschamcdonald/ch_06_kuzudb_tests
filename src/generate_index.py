@@ -2,12 +2,9 @@ import json
 import datetime
 import os
 import shutil
-
-
 from importlib.metadata import version  # Check Python version compatibility
 
-
-kuzu_version = version("kuzu")
+# kuzu_version = version("kuzu")
 
 
 # Function to generate chart.js script
@@ -61,9 +58,11 @@ def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     """
     return chart_js
 
+
 # Function to find all the JSON files in the directory
 def get_json_files():
     return [f for f in os.listdir('.') if f.endswith('.json')]
+
 
 class DashboardCreator:
     def __init__(self, data_files):
@@ -106,7 +105,7 @@ class DashboardCreator:
 """
             for file in self.data_files:
                 friendly_name = file.replace(".json", "").replace("_", " ").capitalize()
-                sidebar_links_html += f'        <a href="{file.replace(".json", ".html")}">{friendly_name}</a>\n'
+                sidebar_links_html += f'        <a href="{file.replace(".json", ".html")}" target="_blank">{friendly_name}</a>\n'
 
             sidebar_links_html += "    </div>\n</div>"
 
@@ -114,7 +113,7 @@ class DashboardCreator:
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>{dashboard_filename.replace(".html", "").replace("_", " ").capitalize()}</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -199,16 +198,17 @@ class DashboardCreator:
 <div class="tab">
 """
 
+            kuzu_version = self.data["kuzu"]
             # Summary Tab Content
             html_content += f"""
     <div id="summary" class="tabcontent">
         <h2>Summary</h2>
-        <table>
+        <table style="background-color: #f0f0f0;">
             <tr><th>Kuzu Database Version</th><td>{kuzu_version}</td></tr>
             <tr><th>Date of Execution</th><td>{execution_date}</td></tr>
         </table>
         <h3>Database Summary</h3>
-        <table>
+        <table style="background-color: #f8f8f8;">
             <tr><th>Entity</th><th>Table Count</th></tr>
 """
 
@@ -222,7 +222,7 @@ class DashboardCreator:
             html_content += """
         </table>
         <h3>Load Times</h3>
-        <table>
+        <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
 """
 
@@ -250,7 +250,7 @@ class DashboardCreator:
     <div id="database_summary" class="tabcontent">
         <h2>Database Summary</h2>
         <div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
-        <table>
+        <table style="background-color: #f8f8f8;">
             <tr><th>Entity</th><th>Table Count</th></tr>
         """
                 for entity, count in summary_dict.items():
@@ -270,7 +270,7 @@ class DashboardCreator:
     <div id="load_times" class="tabcontent">
         <h2>Load Times</h2>
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
-        <table>
+        <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
         """
                 for item in load_time_data:
@@ -319,7 +319,7 @@ class DashboardCreator:
 
             last_dashboard_file = dashboard_filename
 
-            index_content += f'        <li><a href="{dashboard_filename}">{dashboard_filename}</a></li>\n'
+            index_content += f'        <li><a href="{dashboard_filename}" target="_blank">{dashboard_filename.replace(".html", "").replace("_", " ").capitalize()}</a></li>\n'
 
         index_content += """
     </ul>
@@ -331,6 +331,7 @@ class DashboardCreator:
 
         if last_dashboard_file:
             shutil.copyfile(last_dashboard_file, 'index.html')
+
 
 if __name__ == "__main__":
     data_files = get_json_files()
