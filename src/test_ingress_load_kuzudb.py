@@ -10,9 +10,11 @@ import pandas as pd
 from prettytable import PrettyTable
 from importlib.metadata import version  # Check Python version compatibility
 from io import StringIO
+
 from DashboardCreator import DashboardCreator  # Ensure DashboardCreator.py is correctly defined
 
-
+kuzu_version = version("kuzu")
+DATABASE_NAME = f'test_kuzu_db_v{kuzu_version.replace(".", "_")}'
 # Update setup_logging to capture log messages for the HTML report
 def setup_logging():
     log_stream = StringIO()
@@ -46,7 +48,7 @@ def save_data_for_dashboard(load_times, database_summary, log_stream):
         "logs": logs_str
     }
 
-    with open('dashboard_data.json', 'w') as f:
+    with open(f'dashboard_data_{kuzu_version}.json', 'w') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
@@ -114,11 +116,11 @@ def import_table_data(conn, copy_statement, table_name):
 def main():
     log_stream = setup_logging()
     logging.info("This is a test log message.")
+   
 
 
     TEST_DATA_PATH = os.getenv('TEST_DATA_PATH')
-    kuzu_version = version("kuzu")
-    DATABASE_NAME = f'test_kuzu_db_v{kuzu_version.replace(".", "_")}'
+
     DATABASE_DIR = os.path.join(TEST_DATA_PATH, DATABASE_NAME)
 
     DROP_TABLES = True

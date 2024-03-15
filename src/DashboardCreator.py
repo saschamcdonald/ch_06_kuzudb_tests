@@ -1,21 +1,11 @@
 import json
 import datetime
 import subprocess
+import kuzu_version_checker as kuzu_version_checker
+from importlib.metadata import version  # Check Python version compatibility
 
-def get_kuzu_version():
-    try:
-        # Run the "pip show" command and capture its output
-        result = subprocess.run(['pip', 'show', 'kuzu'], capture_output=True, text=True)
-        if result.returncode == 0:
-            # Process the output to find the version line
-            for line in result.stdout.split('\n'):
-                if line.startswith('Version:'):
-                    return line.split(' ')[1]
-            return 'Version not found'
-        else:
-            return 'Error executing pip command'
-    except Exception as e:
-        return f'Error: {e}'
+kuzu_version = version("kuzu")
+
 
 def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     backgroundColors = [
@@ -67,13 +57,15 @@ def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     """
     return chart_js
 
+
 class DashboardCreator:
-    def __init__(self, data_file='dashboard_data.json'):
+
+    def __init__(self, data_file=f'dashboard_data_{kuzu_version}.json'):
         with open(data_file, 'r') as f:
             self.data = json.load(f)
 
     def generate_dashboard(self):
-        kuzu_version = get_kuzu_version()
+       
         execution_date = self.data.get("execution_date", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
         summary_dict = {}

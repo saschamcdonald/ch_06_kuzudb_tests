@@ -1,5 +1,6 @@
 import subprocess
 
+
 def get_kuzu_version():
     try:
         # Run the "pip show" command and capture its output
@@ -14,3 +15,11 @@ def get_kuzu_version():
             return 'Error executing pip command'
     except Exception as e:
         return f'Error: {e}'
+
+
+def main():
+    get_kuzu_version()
+
+    
+if __name__ == "__main__":
+    main()
