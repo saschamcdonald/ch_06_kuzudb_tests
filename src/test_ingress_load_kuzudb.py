@@ -204,8 +204,8 @@ def main():
     # Save formatted data for the dashboard
     save_data_for_dashboard(load_times, database_summary, log_stream)
 
-    dashboard_creator = DashboardCreator()
-    dashboard_creator.generate_dashboard()
+    # dashboard_creator = DashboardCreator()
+    # dashboard_creator.generate_dashboard()
 
 
     # Save the dashboard data

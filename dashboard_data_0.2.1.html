@@ -89,8 +89,9 @@
     <a href="#" onclick="openTab(event, 'config')">Config</a>
     <div class="other-dashboards">
         <p>Other Dashboards</p>
-        <a href="dashboard_0.2.1.html">Kuzu 0.2.1</a>
-        <a href="dashboard_0.0.11.html">Kuzu 0.0.11</a>
+        <a href="dashboard_data_0.2.1.html">Dashboard data 0.2.1</a>
+        <a href="dashboard_data_0.3.2.html">Dashboard data 0.3.2</a>
+        <a href="dashboard_data_0.0.11.html">Dashboard data 0.0.11</a>
     </div>
 </div>
 
@@ -101,7 +102,7 @@
         <h2>Summary</h2>
         <table>
             <tr><th>Kuzu Database Version</th><td>0.2.1</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 17:25:23</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-15 17:49:48</td></tr>
         </table>
         <h3>Database Summary</h3>
         <table>
@@ -111,15 +112,7 @@
         <h3>Load Times</h3>
         <table>
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-<tr><td>Person</td><td>0.14661502838134766</td></tr><tr><td>Company</td><td>0.16883587837219238</td></tr><tr><td>WorksAt</td><td>0.17598986625671387</td></tr>
-        </table>
-    </div>
-
-    <div id="summary" class="tabcontent">
-        <h2>Summary</h2>
-        <table>
-            <tr><th>Kuzu Database Version</th><td>0.2.1</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-15 17:25:23</td></tr>
+<tr><td>Person</td><td>0.0998079776763916</td></tr><tr><td>Company</td><td>0.08518004417419434</td></tr><tr><td>WorksAt</td><td>0.10686826705932617</td></tr>
         </table>
     </div>
 
@@ -169,7 +162,7 @@
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table>
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.14661502838134766</td></tr><tr><td>Company</td><td>0.16883587837219238</td></tr><tr><td>WorksAt</td><td>0.17598986625671387</td></tr></table></div>
+        <tr><td>Person</td><td>0.0998079776763916</td></tr><tr><td>Company</td><td>0.08518004417419434</td></tr><tr><td>WorksAt</td><td>0.10686826705932617</td></tr></table></div>
     <script>
         var ctx = document.getElementById('loadTimeChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -178,7 +171,7 @@
                 labels: ["Person", "Company", "WorksAt"],
                 datasets: [{
                     label: 'Load Times',
-                    data: [0.15, 0.17, 0.18],
+                    data: [0.1, 0.09, 0.11],
                     backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                     borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                     borderWidth: 1
