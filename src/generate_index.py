@@ -67,7 +67,11 @@ class DashboardCreator:
     def __init__(self, data_directory='.'):
         self.data_directory = data_directory
         self.aggregated_data = self.aggregate_data()
-        self.comparison_data = self.prepare_comparison_data()
+        self.person_data = self.prepare_comparison_data('Person')
+        self.company_data = self.prepare_comparison_data('Company')
+        self.works_at_data = self.prepare_comparison_data('WorksAt')
+
+
 
     def aggregate_data(self):
         aggregated_data = {}
@@ -368,9 +372,13 @@ class DashboardCreator:
                 f.write(load_time_chart_html)
 
         # Create comparison dashboard
-        comparison_labels, comparison_data = self.comparison_data
-        comparison_chart_html = generate_chart_js("loadTimeComparisonChart", "bar", comparison_labels, comparison_data, "Load Times for Person")
-
+        person_labels, person_data = self.person_data
+        person_chart_html = generate_chart_js("loadTimeComparisonChart", "bar", person_labels, person_data, "Load Times for Person")
+        company_labels, company_data = self.company_data
+        company_chart_html = generate_chart_js("loadTimeComparisonChart", "bar", company_labels, company_data, "Load Times for Company")
+        works_at_labels, works_at_data = self.works_at_data
+        works_at_chart_html = generate_chart_js("loadTimeComparisonChart", "bar", works_at_labels, works_at_data, "Load Times for WorksAt")
+        
         comparison_html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -466,36 +474,43 @@ class DashboardCreator:
             <h2>Load Time Comparison</h2>
             <div class="chart-container"><canvas id="loadTimeComparisonChart"></canvas></div>
         </div>
-    """
+        """
 
-        comparison_html_content += comparison_chart_html  # Append chart HTML
+        # Append Person chart HTML
+        comparison_html_content += person_chart_html
+
+        # Append Company chart HTML
+        comparison_html_content += company_chart_html
+
+        # Append WorksAt chart HTML
+        comparison_html_content += works_at_chart_html
 
         comparison_html_content += """
-    </div>
+        </div>
 
-    <script>
-        // Open the default tab when the page loads
-        document.getElementById("summary").style.display = "block";
+        <script>
+            // Open the default tab when the page loads
+            document.getElementById("summary").style.display = "block";
 
-        // Function to switch between tabs
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
+            // Function to switch between tabs
+            function openTab(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].classList.remove("active");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.classList.add("active");
             }
-            tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.classList.add("active");
-        }
-    </script>
+        </script>
 
-    </body>
-    </html>
-    """
+        </body>
+        </html>
+        """
 
         with open('comparison.html', 'w') as f:
             f.write(comparison_html_content)

@@ -103,7 +103,7 @@
             <h2>Load Time Comparison</h2>
             <div class="chart-container"><canvas id="loadTimeComparisonChart"></canvas></div>
         </div>
-    
+        
     <script>
         var ctx = document.getElementById('loadTimeComparisonChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -139,28 +139,98 @@
         });
     </script>
     
-    </div>
-
     <script>
-        // Open the default tab when the page loads
-        document.getElementById("summary").style.display = "block";
-
-        // Function to switch between tabs
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
+        var ctx = document.getElementById('loadTimeComparisonChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["0.0.11", "0.2.1", "0.3.2"],
+                datasets: [{
+                    label: 'Load Times for Company',
+                    data: [0.4068789482116699, 0.26365184783935547, 0.10957002639770508],
+                    backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                    borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                return label;
+                            }
+                        }
+                    }
+                }
             }
-            tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.classList.add("active");
-        }
+        });
     </script>
-
-    </body>
-    </html>
     
+    <script>
+        var ctx = document.getElementById('loadTimeComparisonChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["0.0.11", "0.2.1", "0.3.2"],
+                datasets: [{
+                    label: 'Load Times for WorksAt',
+                    data: [0.13772130012512207, 0.1928997039794922, 0.11078977584838867],
+                    backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                    borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+        </div>
+
+        <script>
+            // Open the default tab when the page loads
+            document.getElementById("summary").style.display = "block";
+
+            // Function to switch between tabs
+            function openTab(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].classList.remove("active");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.classList.add("active");
+            }
+        </script>
+
+        </body>
+        </html>
+        
