@@ -1,0 +1,166 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Comparison Dashboard</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            /* Define sidebar styles */
+            .sidebar {
+                height: 100%;
+                width: 250px;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                background-color: #111;
+                overflow-x: hidden;
+                padding-top: 20px;
+            }
+            
+            /* Define sidebar links styles */
+            .sidebar a {
+                padding: 10px 8px;
+                text-decoration: none;
+                font-size: 20px;
+                color: #818181;
+                display: block;
+                transition: background-color 0.3s;
+            }
+            
+            /* Define sidebar links on hover styles */
+            .sidebar a:hover {
+                background-color: #333;
+                color: #f1f1f1;
+            }
+
+            /* Define active tab styles */
+            .sidebar a.active, .sidebar a.active:hover {
+                background-color: #333;
+                color: #f1f1f1;
+            }
+
+            /* Define tab styles */
+            .tab {
+                margin-left: 250px; /* Same width as the sidebar */
+            }
+
+            /* Define tab content styles */
+            .tabcontent {
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+            }
+            
+            /* Define table styles */
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #ddd;
+                font-family: Arial, sans-serif;
+            }
+            
+            th, td {
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            
+            th {
+                color: #111; /* Text color for title columns */
+            }
+        </style>
+    </head>
+    <body>
+
+    <!-- Sidebar -->
+    
+    <div class="sidebar">
+        <a href="#" onclick="openTab(event, 'summary')">Summary</a>
+        <a href="comparison.html">Compare Results</a>
+        <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+        <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+        <a href="#" onclick="openTab(event, 'config')">Config</a>
+        <div class="other-dashboards">
+            <p>Other Dashboards</p>
+            <a href="0_2_1_dashboard.html">0 2 1</a>
+        <a href="0_3_2_dashboard.html">0 3 2</a>
+        <a href="0_0_11_dashboard.html">0 0 11</a>
+    </div>
+</div>
+
+    <!-- Main content -->
+    <div class="tab">
+    
+        <div id="summary" class="tabcontent">
+            <h2>Load Time Comparison</h2>
+            <div class="chart-container"><canvas id="loadTimeComparisonChart"></canvas></div>
+        </div>
+    
+    <script>
+        var ctx = document.getElementById('loadTimeComparisonChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["0.0.11", "0.2.1", "0.3.2"],
+                datasets: [{
+                    label: 'Load Times for Person',
+                    data: [0.2641599178314209, 0.1378040313720703, 0.1908421516418457],
+                    backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
+                    borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw.toString().replace(/\B(?=(\d3)+(?!\d))/g, ",");
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    
+    </div>
+
+    <script>
+        // Open the default tab when the page loads
+        document.getElementById("summary").style.display = "block";
+
+        // Function to switch between tabs
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+
+    </body>
+    </html>
+    

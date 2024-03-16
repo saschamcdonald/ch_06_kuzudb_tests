@@ -210,7 +210,7 @@ def main():
 
     # Save the dashboard data
 
-    logging.info("Dashboard created successfully.")
+    logging.info("Dashboard data created successfully.")
 
 if __name__ == "__main__":
     main()

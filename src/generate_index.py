@@ -3,6 +3,7 @@ import datetime
 import os
 import shutil
 import hashlib
+import glob
 
 from importlib.metadata import version  # Check Python version compatibility
 
@@ -57,15 +58,38 @@ def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
     """
     return chart_js
 
-
 # Function to find all the JSON files in the directory
-def get_json_files():
-    return [f for f in os.listdir('.') if f.endswith('.json')]
+def get_json_files(directory='.'):
+    return [f for f in glob.glob(os.path.join(directory, '*.json'))]
 
 
 class DashboardCreator:
-    def __init__(self, data_files):
-        self.data_files = data_files
+    def __init__(self, data_directory='.'):
+        self.data_directory = data_directory
+        self.aggregated_data = self.aggregate_data()
+        self.comparison_data = self.prepare_comparison_data()
+
+    def aggregate_data(self):
+        aggregated_data = {}
+        json_files = glob.glob(os.path.join(self.data_directory, '*.json'))
+        for json_file in json_files:
+            with open(json_file, 'r') as f:
+                data = json.load(f)
+            kuzu_version = data.get('kuzu')
+            if kuzu_version not in aggregated_data:
+                aggregated_data[kuzu_version] = {'load_times': [], 'database_summary': []}
+            aggregated_data[kuzu_version]['load_times'].extend(data.get('load_times', []))
+            aggregated_data[kuzu_version]['database_summary'].extend(data.get('database_summary', []))
+        return aggregated_data
+
+    def prepare_comparison_data(self, table_name='Person'):
+        labels = sorted(self.aggregated_data.keys())  # Kuzu versions
+        data = []
+        for version in labels:
+            # Find the load time for the specified table in each version, or use 0 if not found
+            load_time = next((lt["Load Time (Seconds)"] for lt in self.aggregated_data[version]["load_times"] if lt["Table Name"] == table_name), 0)
+            data.append(load_time)
+        return labels, data
 
     def generate_color(self, filename):
         hash_value = hashlib.md5(filename.encode()).hexdigest()
@@ -76,281 +100,411 @@ class DashboardCreator:
 
     def generate_dashboard(self):
         index_content = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard Index</title>
-</head>
-<body>
-    <h1>Dashboard Index</h1>
-    <ul>
-"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Dashboard Index</title>
+    </head>
+    <body>
+        <h1>Dashboard Index</h1>
+        <ul>
+    """
 
         last_dashboard_file = None
 
-        for data_file in self.data_files:
-            with open(data_file, 'r') as f:
-                self.data = json.load(f)
+        for version in self.aggregated_data:
+            data = self.aggregated_data[version]
+            dashboard_filename = f'{version.replace(".", "_")}_dashboard.html'
 
-            dashboard_filename = f'{data_file.replace(".json", ".html")}'
-
-            execution_date = self.data.get("execution_date", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            execution_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             summary_dict = {}
             load_time_data = []
 
             sidebar_links_html = """
-<div class="sidebar">
-    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
-    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
-    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
-    <a href="#" onclick="openTab(event, 'config')">Config</a>
-    <div class="other-dashboards">
-        <p>Other Dashboards</p>
-"""
-            for file in self.data_files:
-                friendly_name = file.replace(".json", "").replace("_", " ").capitalize()
-                sidebar_links_html += f'        <a href="{file.replace(".json", ".html")}">{friendly_name}</a>\n'
+    <div class="sidebar">
+        <a href="#" onclick="openTab(event, 'summary')">Summary</a>
+        <a href="comparison.html">Compare Results</a>
+        <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+        <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+        <a href="#" onclick="openTab(event, 'config')">Config</a>
+        <div class="other-dashboards">
+            <p>Other Dashboards</p>
+    """
+            for version in self.aggregated_data:
+                friendly_name = version.replace(".", " ").capitalize()
+                sidebar_links_html += f'        <a href="{version.replace(".", "_")}_dashboard.html">{friendly_name}</a>\n'
 
             sidebar_links_html += "    </div>\n</div>"
 
             html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{dashboard_filename.replace(".html", "").replace("_", " ").capitalize()}</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Define sidebar styles */
-        .sidebar {{
-            height: 100%;
-            width: 250px;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            padding-top: 20px;
-        }}
-        
-        /* Define sidebar links styles */
-        .sidebar a {{
-            padding: 10px 8px;
-            text-decoration: none;
-            font-size: 20px;
-            color: #818181;
-            display: block;
-            transition: background-color 0.3s;
-        }}
-        
-        /* Define sidebar links on hover styles */
-        .sidebar a:hover {{
-            background-color: #333;
-            color: #f1f1f1;
-        }}
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{version.replace(".", "_").replace("_", " ").capitalize()} Dashboard</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            /* Define sidebar styles */
+            .sidebar {{
+                height: 100%;
+                width: 250px;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                background-color: #111;
+                overflow-x: hidden;
+                padding-top: 20px;
+            }}
+            
+            /* Define sidebar links styles */
+            .sidebar a {{
+                padding: 10px 8px;
+                text-decoration: none;
+                font-size: 20px;
+                color: #818181;
+                display: block;
+                transition: background-color 0.3s;
+            }}
+            
+            /* Define sidebar links on hover styles */
+            .sidebar a:hover {{
+                background-color: #333;
+                color: #f1f1f1;
+            }}
 
-        /* Define active tab styles */
-        .sidebar a.active, .sidebar a.active:hover {{
-            background-color: {self.generate_color(dashboard_filename)};
-            color: white;
-        }}
+            /* Define active tab styles */
+            .sidebar a.active, .sidebar a.active:hover {{
+                background-color: {self.generate_color(version)};
+                color: white;
+            }}
 
-        /* Define tab styles */
-        .tab {{
-            margin-left: 250px; /* Same width as the sidebar */
-        }}
+            /* Define tab styles */
+            .tab {{
+                margin-left: 250px; /* Same width as the sidebar */
+            }}
 
-        /* Define tab content styles */
-        .tabcontent {{
-            display: none;
-            padding: 6px 12px;
-            border: 1px solid #ccc;
-            border-top: none;
-        }}
-        
-        /* Define table styles */
-        table {{
-            border-collapse: collapse;
-            width: 100%;
-            border: 1px solid #ddd;
-            font-family: Arial, sans-serif;
-        }}
-        
-        th, td {{
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }}
-        
-        tr:nth-child(even) {{
-            background-color: #f2f2f2;
-        }}
-        
-        th {{
-            color: #111; /* Text color for title columns */
-        }}
-    </style>
-</head>
-<body>
+            /* Define tab content styles */
+            .tabcontent {{
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+            }}
+            
+            /* Define table styles */
+            table {{
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #ddd;
+                font-family: Arial, sans-serif;
+            }}
+            
+            th, td {{
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }}
+            
+            tr:nth-child(even) {{
+                background-color: #f2f2f2;
+            }}
+            
+            th {{
+                color: #111; /* Text color for title columns */
+            }}
+        </style>
+    </head>
+    <body>
 
-<!-- Sidebar -->
-{ sidebar_links_html }
+    <!-- Sidebar -->
+    { sidebar_links_html }
 
-<!-- Main content -->
-<div class="tab">
-"""
+    <!-- Main content -->
+    <div class="tab">
+    """
 
-            kuzu_version = self.data["kuzu"]
             # Summary Tab Content
             html_content += f"""
-    <div id="summary" class="tabcontent">
-        <h2>Summary Kuzu - {kuzu_version}</h2>
-        <table style="background-color: {self.generate_color(dashboard_filename)};">
-            <tr><th>Kuzu Version</th><td>{kuzu_version}</td></tr>
-            <tr><th>Date of Execution</th><td>{execution_date}</td></tr>
-        </table>
-        <h3>Database Summary</h3>
-        <table style="background-color: #f8f8f8;">
-            <tr><th>Entity</th><th>Table Count</th></tr>
-"""
+        <div id="summary" class="tabcontent">
+            <h2>Summary Kuzu - {version}</h2>
+            <table style="background-color: {self.generate_color(version)};">
+                <tr><th>Kuzu Version</th><td>{version}</td></tr>
+                <tr><th>Date of Execution</th><td>{execution_date}</td></tr>
+            </table>
+            <h3>Database Summary</h3>
+            <table style="background-color: #f8f8f8;">
+                <tr><th>Entity</th><th>Table Count</th></tr>
+    """
 
-            if "database_summary" in self.data:
-                for item in self.data["database_summary"]:
+            if "database_summary" in data:
+                for item in data["database_summary"]:
                     entity = item["Entity"]
                     node_count = int(item["Table Count"].replace(",", ""))
                     summary_dict[entity] = node_count
                     html_content += f'<tr><td>{entity}</td><td>{node_count:,}</td></tr>'
 
             html_content += f"""
-        </table>
-        <h3>Load Times: Kuzu - {kuzu_version}</h3>
-        <table style="background-color: #f8f8f8;">
-            <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-"""
+            </table>
+            <h3>Load Times: Kuzu - {version}</h3>
+            <table style="background-color: #f8f8f8;">
+                <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
+    """
 
-            if "load_times" in self.data:
-                load_time_data = self.data["load_times"]
+            if "load_times" in data:
+                load_time_data = data["load_times"]
                 for item in load_time_data:
                     html_content += f'<tr><td>{item["Table Name"]}</td><td>{item["Load Time (Seconds)"]}</td></tr>'
 
             html_content += """
-        </table>
-    </div>
-"""
+            </table>
+        </div>
+    """
 
-            if "database_summary" in self.data:
-                for item in self.data["database_summary"]:
-                    entity = item["Entity"]
-                    node_count = int(item["Table Count"].replace(",", ""))
-                    summary_dict[entity] = node_count
+            # Database Summary Tab Content
+            summary_labels = list(summary_dict.keys())
+            summary_data = list(summary_dict.values())
+            html_content += f"""
+        <div id="database_summary" class="tabcontent">
+            <h2>Database Summary: Kuzu - {version}</h2>
+            <div class="chart-container"><canvas id="summaryChart_{version.replace(".", "_")}"></canvas></div><br>
+            <table style="background-color: #f8f8f8;">
+                <tr><th>Entity</th><th>Table Count</th></tr>
+            """
+            for entity, count in summary_dict.items():
+                html_content += f'<tr><td>{entity}</td><td>{count:,}</td></tr>'
+            html_content += '</table></div>'
 
-                summary_labels = list(summary_dict.keys())
-                summary_data = list(summary_dict.values())
+            # Generate pie chart for database summary
+            chart_id = f"summaryChart_{version.replace('.', '_')}"
+            chart_type = "pie"
+            chart_dataset_label = "Database Summary"
+            chart_html = generate_chart_js(chart_id, chart_type, summary_labels, summary_data, chart_dataset_label)
+            html_content += chart_html
 
-                # Database Summary Tab Content
-                html_content += f"""
-    <div id="database_summary" class="tabcontent">
-        <h2>Database Summary: Kuzu - {kuzu_version}</h2>
-        <div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
-        <table style="background-color: #f8f8f8;">
-            <tr><th>Entity</th><th>Table Count</th></tr>
-        """
-                for entity, count in summary_dict.items():
-                    html_content += f'<tr><td>{entity}</td><td>{count:,}</td></tr>'
-                html_content += '</table></div>'
-
-                html_content += generate_chart_js("summaryChart", "pie", summary_labels, summary_data, "Database Summary")
-
-            if "load_times" in self.data:
-                load_time_data = self.data["load_times"]
-
-                load_time_labels = [item["Table Name"] for item in load_time_data]
-                load_time_values = [round(float(item["Load Time (Seconds)"]), 2) for item in load_time_data]
-
-                # Load Times Tab Content
-                html_content += f"""
-    <div id="load_times" class="tabcontent">
-        <h2>Load Times: Kuzu Version - {kuzu_version}</h2>
-        <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
-        <table style="background-color: #f8f8f8;">
-            <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        """
-                for item in load_time_data:
-                    html_content += f'<tr><td>{item["Table Name"]}</td><td>{item["Load Time (Seconds)"]}</td></tr>'
-                html_content += '</table></div>'
-
-                html_content += generate_chart_js("loadTimeChart", "bar", load_time_labels, load_time_values, "Load Times")
+            # Load Times Tab Content
+            html_content += f"""
+        <div id="load_times" class="tabcontent">
+            <h2>Load Times: Kuzu Version - {version}</h2>
+            <div class="chart-container"><canvas id="loadTimeChart_{version.replace(".", "_")}"></canvas></div><br>
+            <table style="background-color: #f8f8f8;">
+                <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
+            """
+            for item in load_time_data:
+                html_content += f'<tr><td>{item["Table Name"]}</td><td>{item["Load Time (Seconds)"]}</td></tr>'
+            html_content += '</table></div>'
 
             # Config Tab Content
             html_content += f"""
-    <div id="config" class="tabcontent">
-        <h2>Config: Kuzu  - {kuzu_version}</h2>
-        <form id="configForm">
-            <label for="open_tabs">Open Dashboards:</label><br>
-            <input type="radio" id="same_tab" name="open_tabs" value="same_tab" checked>
-            <label for="same_tab">Same Tab</label><br>
-            <input type="radio" id="separate_tabs" name="open_tabs" value="separate_tabs">
-            <label for="separate_tabs">Separate Tabs</label><br><br>
-        </form>
-    </div>
-"""
+        <div id="config" class="tabcontent">
+            <h2>Config: Kuzu  - {version}</h2>
+            <form id="configForm">
+                <label for="open_tabs">Open Dashboards:</label><br>
+                <input type="radio" id="same_tab" name="open_tabs" value="same_tab" checked>
+                <label for="same_tab">Same Tab</label><br>
+                <input type="radio" id="separate_tabs" name="open_tabs" value="separate_tabs">
+                <label for="separate_tabs">Separate Tabs</label><br><br>
+            </form>
+        </div>
+    """
 
             html_content += """
-</div>
+    </div>
 
-<script>
-    // Open the default tab when the page loads
-    document.getElementById("summary").style.display = "block";
+    <script>
+        // Open the default tab when the page loads
+        document.getElementById("summary").style.display = "block";
 
-    // Function to switch between tabs
-    function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.classList.add("active");
-    }
-
-    // Function to handle configuration changes
-    document.getElementById("configForm").addEventListener("change", function() {
-        var tabsOption = document.querySelector('input[name="open_tabs"]:checked').value;
-        var sidebarLinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
-        for (var i = 0; i < sidebarLinks.length; i++) {
-            var link = sidebarLinks[i];
-            if (tabsOption === "same_tab") {
-                link.removeAttribute("target");
-            } else {
-                link.setAttribute("target", "_blank");
+        // Function to switch between tabs
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
             }
+            tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
         }
-    });
-</script>
 
-</body>
-</html>
-        """
+        // Function to handle configuration changes
+        document.getElementById("configForm").addEventListener("change", function() {
+            var tabsOption = document.querySelector('input[name="open_tabs"]:checked').value;
+            var sidebarLinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+            for (var i = 0; i < sidebarLinks.length; i++) {
+                var link = sidebarLinks[i];
+                if (tabsOption === "same_tab") {
+                    link.removeAttribute("target");
+                } else {
+                    link.setAttribute("target", "_blank");
+                }
+            }
+        });
+    </script>
+
+    </body>
+    </html>
+    """
 
             with open(dashboard_filename, 'w') as f:
                 f.write(html_content)
 
             last_dashboard_file = dashboard_filename
 
-            index_content += f'        <li><a href="{dashboard_filename}">{dashboard_filename.replace(".html", "").replace("_", " ").capitalize()}</a></li>\n'
+            index_content += f'        <li><a href="{dashboard_filename}">{dashboard_filename.replace("_", " ").capitalize()}</a></li>\n'
+
+            # Generate load time chart for the current dashboard
+            load_times_labels = [item["Table Name"] for item in load_time_data]
+            load_times_values = [float(item["Load Time (Seconds)"]) for item in load_time_data]
+            load_time_chart_html = generate_chart_js(f"loadTimeChart_{version.replace('.', '_')}", "bar", load_times_labels, load_times_values, "Load Times")
+
+            # Write load time chart HTML to the current dashboard
+            with open(dashboard_filename, 'a') as f:
+                f.write(load_time_chart_html)
+
+        # Create comparison dashboard
+        comparison_labels, comparison_data = self.comparison_data
+        comparison_chart_html = generate_chart_js("loadTimeComparisonChart", "bar", comparison_labels, comparison_data, "Load Times for Person")
+
+        comparison_html_content = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Comparison Dashboard</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            /* Define sidebar styles */
+            .sidebar {{
+                height: 100%;
+                width: 250px;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                background-color: #111;
+                overflow-x: hidden;
+                padding-top: 20px;
+            }}
+            
+            /* Define sidebar links styles */
+            .sidebar a {{
+                padding: 10px 8px;
+                text-decoration: none;
+                font-size: 20px;
+                color: #818181;
+                display: block;
+                transition: background-color 0.3s;
+            }}
+            
+            /* Define sidebar links on hover styles */
+            .sidebar a:hover {{
+                background-color: #333;
+                color: #f1f1f1;
+            }}
+
+            /* Define active tab styles */
+            .sidebar a.active, .sidebar a.active:hover {{
+                background-color: #333;
+                color: #f1f1f1;
+            }}
+
+            /* Define tab styles */
+            .tab {{
+                margin-left: 250px; /* Same width as the sidebar */
+            }}
+
+            /* Define tab content styles */
+            .tabcontent {{
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+            }}
+            
+            /* Define table styles */
+            table {{
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #ddd;
+                font-family: Arial, sans-serif;
+            }}
+            
+            th, td {{
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }}
+            
+            tr:nth-child(even) {{
+                background-color: #f2f2f2;
+            }}
+            
+            th {{
+                color: #111; /* Text color for title columns */
+            }}
+        </style>
+    </head>
+    <body>
+
+    <!-- Sidebar -->
+    { sidebar_links_html }
+
+    <!-- Main content -->
+    <div class="tab">
+    """
+
+        # Append comparison chart HTML to the comparison dashboard content
+        comparison_html_content += """
+        <div id="summary" class="tabcontent">
+            <h2>Load Time Comparison</h2>
+            <div class="chart-container"><canvas id="loadTimeComparisonChart"></canvas></div>
+        </div>
+    """
+
+        comparison_html_content += comparison_chart_html  # Append chart HTML
+
+        comparison_html_content += """
+    </div>
+
+    <script>
+        // Open the default tab when the page loads
+        document.getElementById("summary").style.display = "block";
+
+        // Function to switch between tabs
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("sidebar")[0].getElementsByTagName("a");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+
+    </body>
+    </html>
+    """
+
+        with open('comparison.html', 'w') as f:
+            f.write(comparison_html_content)
 
         index_content += """
-    </ul>
-</body>
-</html>
-"""
+        </ul>
+    </body>
+    </html>
+    """
         with open('index.html', 'w') as f:
             f.write(index_content)
 
@@ -359,6 +513,6 @@ class DashboardCreator:
 
 
 if __name__ == "__main__":
-    data_files = get_json_files()
-    dashboard_creator = DashboardCreator(data_files)
+    data_directory = '.'  # Change this to the directory where your JSON files are located
+    dashboard_creator = DashboardCreator(data_directory)
     dashboard_creator.generate_dashboard()
