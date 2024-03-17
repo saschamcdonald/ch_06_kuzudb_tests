@@ -100,6 +100,11 @@ After installing the desired Python version, you can create a virtual environmen
 
 ---
 
+NOTE: A short cut to automate testing multiple versions automatically rather than manually run this script and configure in the script to automate the tests for all versions:
+
+- Configure: `versions=("0.0.11" "0.2.1" "latest")`:
+- Execute: `src/tools/run_tests.sh`
+
 ### Create and Activate Virtual Environment and Run the First Test for Kuzu Version 0.1.1:
 
 **NOTE:** This version successfully loads all the data (PASSES using defaults provided in this repository).
@@ -125,6 +130,8 @@ After installing the desired Python version, you can create a virtual environmen
   # Run the main script to generate and load data into KuzuDB
   # (Comment out data creation script in main.py if data has already been generated)
   python src/main.py
+  # This will generate the html dashbaords
+  python3 src/generate_index.py
   ```
 
 ### Create and Activate Virtual Environment and run the second test for Kuzu Version 0.2.0:
