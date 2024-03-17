@@ -102,17 +102,16 @@ class DashboardCreator:
 
             sidebar_links_html = """
 <div class="sidebar">
-<a href="#" onclick="openTab(event, 'config')">Config</a>
+    <a href="#" onclick="openTab(event, 'summary')">Summary</a>
+    <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a>
+    <a href="#" onclick="openTab(event, 'load_times')">Load Times</a>
+    <a href="#" onclick="openTab(event, 'config')">Config</a>
     <div class="other-dashboards">
         <p>Other Dashboards</p>
 """
             for file in self.data_files:
                 friendly_name = file.replace(".json", "").replace("_", " ").capitalize()
                 sidebar_links_html += f'        <a href="{file.replace(".json", ".html")}">{friendly_name}</a>\n'
-                sidebar_links_html += """ <ul>
-                   <li> <a href="#" onclick="openTab(event, 'database_summary')">Database Summary</a> </li>
-                    <li> <a href="#" onclick="openTab(event, 'load_times')">Load Times</a> </li>
-                    </ul>"""
 
             sidebar_links_html += "    </div>\n</div>"
 
@@ -123,6 +122,77 @@ class DashboardCreator:
     <title>{dashboard_filename.replace(".html", "").replace("_", " ").capitalize()}</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Define sidebar styles */
+        .sidebar {{
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }}
+        
+        /* Define sidebar links styles */
+        .sidebar a {{
+            padding: 10px 8px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: background-color 0.3s;
+        }}
+        
+        /* Define sidebar links on hover styles */
+        .sidebar a:hover {{
+            background-color: #333;
+            color: #f1f1f1;
+        }}
+
+        /* Define active tab styles */
+        .sidebar a.active, .sidebar a.active:hover {{
+            background-color: {self.generate_color(dashboard_filename)};
+            color: white;
+        }}
+
+        /* Define tab styles */
+        .tab {{
+            margin-left: 250px; /* Same width as the sidebar */
+        }}
+
+        /* Define tab content styles */
+        .tabcontent {{
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }}
+        
+        /* Define table styles */
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            font-family: Arial, sans-serif;
+        }}
+        
+        th, td {{
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }}
+        
+        tr:nth-child(even) {{
+            background-color: #f2f2f2;
+        }}
+        
+        th {{
+            color: #111; /* Text color for title columns */
+        }}
+    </style>
 </head>
 <body>
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard data 0.0.11</title>
+    <title>Dashboard data 0.3.2</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -33,9 +33,9 @@
 <div class="tab">
 
     <div id="summary" class="tabcontent">
-        <h2>Summary Kuzu - 0.0.11</h2>
-        <table style="background-color: rgba(213, 54, 188, 0.3);">
-            <tr><th>Kuzu Version</th><td>0.0.11</td></tr>
+        <h2>Summary Kuzu - 0.3.2</h2>
+        <table style="background-color: rgba(31, 239, 60, 0.3);">
+            <tr><th>Kuzu Version</th><td>0.3.2</td></tr>
             <tr><th>Date of Execution</th><td>2024-03-17 17:44:31</td></tr>
         </table>
         <h3>Database Summary</h3>
@@ -43,15 +43,15 @@
             <tr><th>Entity</th><th>Table Count</th></tr>
 <tr><td>Company</td><td>3,000</td></tr><tr><td>Person</td><td>1,000</td></tr><tr><td>WorksAt</td><td>18,000</td></tr>
         </table>
-        <h3>Load Times: Kuzu - 0.0.11</h3>
+        <h3>Load Times: Kuzu - 0.3.2</h3>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-<tr><td>Person</td><td>0.0737612247467041</td></tr><tr><td>Company</td><td>0.06829071044921875</td></tr><tr><td>WorksAt</td><td>0.0915689468383789</td></tr>
+<tr><td>Person</td><td>0.12198805809020996</td></tr><tr><td>Company</td><td>0.0975799560546875</td></tr><tr><td>WorksAt</td><td>0.10700631141662598</td></tr>
         </table>
     </div>
 
     <div id="database_summary" class="tabcontent">
-        <h2>Database Summary: Kuzu - 0.0.11</h2>
+        <h2>Database Summary: Kuzu - 0.3.2</h2>
         <div class="chart-container"><canvas id="summaryChart"></canvas></div><br>
         <table style="background-color: #f8f8f8;">
             <tr><th>Entity</th><th>Table Count</th></tr>
@@ -92,11 +92,11 @@
     </script>
     
     <div id="load_times" class="tabcontent">
-        <h2>Load Times: Kuzu Version - 0.0.11</h2>
+        <h2>Load Times: Kuzu Version - 0.3.2</h2>
         <div class="chart-container"><canvas id="loadTimeChart"></canvas></div><br>
         <table style="background-color: #f8f8f8;">
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
-        <tr><td>Person</td><td>0.0737612247467041</td></tr><tr><td>Company</td><td>0.06829071044921875</td></tr><tr><td>WorksAt</td><td>0.0915689468383789</td></tr></table></div>
+        <tr><td>Person</td><td>0.12198805809020996</td></tr><tr><td>Company</td><td>0.0975799560546875</td></tr><tr><td>WorksAt</td><td>0.10700631141662598</td></tr></table></div>
     <script>
         var ctx = document.getElementById('loadTimeChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -105,7 +105,7 @@
                 labels: ["Person", "Company", "WorksAt"],
                 datasets: [{
                     label: 'Load Times',
-                    data: [0.07, 0.07, 0.09],
+                    data: [0.12, 0.1, 0.11],
                     backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)", "rgba(255, 206, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(255, 159, 64, 0.2)"],
                     borderColor: ["rgba(255,99,132,1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)"],
                     borderWidth: 1
@@ -133,7 +133,7 @@
     </script>
     
     <div id="config" class="tabcontent">
-        <h2>Config: Kuzu  - 0.0.11</h2>
+        <h2>Config: Kuzu  - 0.3.2</h2>
         <form id="configForm">
             <label for="open_tabs">Open Dashboards:</label><br>
             <input type="radio" id="same_tab" name="open_tabs" value="same_tab" checked>
