@@ -36,7 +36,7 @@
         <h2>Summary Kuzu - 0.3.2</h2>
         <table style="background-color: rgba(31, 239, 60, 0.3);">
             <tr><th>Kuzu Version</th><td>0.3.2</td></tr>
-            <tr><th>Date of Execution</th><td>2024-03-17 17:44:31</td></tr>
+            <tr><th>Date of Execution</th><td>2024-03-17 18:34:17</td></tr>
         </table>
         <h3>Database Summary</h3>
         <table style="background-color: #f8f8f8;">
@@ -48,7 +48,26 @@
             <tr><th>Table Name</th><th>Load Time (Seconds)</th></tr>
 <tr><td>Person</td><td>0.12198805809020996</td></tr><tr><td>Company</td><td>0.0975799560546875</td></tr><tr><td>WorksAt</td><td>0.10700631141662598</td></tr>
         </table>
+        <h2> Kuzu versons - Table Load Times</h2>
+        <p> 
+        <div style="width:60%; height:400px; resize: both; overflow: auto;">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            var ctx = document.getElementById('comparisonChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["0.0.11", "0.2.1", "0.3.2"],
+                    datasets: [{"label": "Person", "data": [0.0737612247467041, 0.0836946964263916, 0.12198805809020996], "backgroundColor": "rgba(25, 37, 153, 0.6)", "borderColor": "rgba(28, 176, 223, 0.6)", "borderWidth": 1}, {"label": "Company", "data": [0.06829071044921875, 0.07357192039489746, 0.0975799560546875], "backgroundColor": "rgba(33, 90, 36, 0.6)", "borderColor": "rgba(208, 77, 110, 0.6)", "borderWidth": 1}, {"label": "WorksAt", "data": [0.0915689468383789, 0.0745248794555664, 0.10700631141662598], "backgroundColor": "rgba(18, 227, 63, 0.6)", "borderColor": "rgba(6, 243, 34, 0.6)", "borderWidth": 1}]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        </script>
+        </p>
     </div>
+
 
     <div id="database_summary" class="tabcontent">
         <h2>Database Summary: Kuzu - 0.3.2</h2>

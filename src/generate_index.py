@@ -3,8 +3,9 @@ import datetime
 import os
 import shutil
 import hashlib
+from comparisons import ComparisonWidget
 
-from importlib.metadata import version  # Check Python version compatibility
+
 
 # Function to generate chart.js script
 def generate_chart_js(chart_id, chart_type, labels, data, dataset_label):
@@ -75,6 +76,9 @@ class DashboardCreator:
         return f'rgba({r}, {g}, {b}, 0.3)'
 
     def generate_dashboard(self):
+        data_directory='.'
+        comparison_widget = ComparisonWidget(data_directory)
+        widget_html = comparison_widget.generate_widget()
         index_content = """
 <!DOCTYPE html>
 <html lang="en">
@@ -166,9 +170,12 @@ class DashboardCreator:
                 for item in load_time_data:
                     html_content += f'<tr><td>{item["Table Name"]}</td><td>{item["Load Time (Seconds)"]}</td></tr>'
 
-            html_content += """
+            html_content += f"""
         </table>
+        <h2> Kuzu versons - Table Load Times</h2>
+        <p> {widget_html}</p>
     </div>
+
 """
 
             if "database_summary" in self.data:
@@ -289,6 +296,7 @@ class DashboardCreator:
 
 
 if __name__ == "__main__":
+    
     data_files = get_json_files()
     dashboard_creator = DashboardCreator(data_files)
     dashboard_creator.generate_dashboard()
