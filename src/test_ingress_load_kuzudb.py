@@ -199,8 +199,8 @@ def main():
     person_node_count = conn.execute(
         'MATCH (n:Person) RETURN COUNT(n) AS PersonNodeCount;').get_next()[0]
     WorksAt_rel_count = conn.execute(
-        'MATCH ()-[r:WorksAt]-() RETURN COUNT(r) AS RelationshipCount;').get_next()[0]
-
+        # 'MATCH ()-[r:WorksAt]-() RETURN COUNT(r) AS RelationshipCount;').get_next()[0]
+        'MATCH (:Person)-[r:WorksAt]->(:Company) RETURN COUNT(r) AS RelationshipCount;').get_next()[0]
     formatted_company_node_count = format(company_node_count, ',')
     formatted_person_node_count = format(person_node_count, ',')
     formatted_WorksAt_rel_count = format(WorksAt_rel_count, ',')
