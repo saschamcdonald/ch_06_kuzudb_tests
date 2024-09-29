@@ -1,4 +1,7 @@
+# NOTE: This repository has been archived as it addresses an issue that has since been resolved by the KuzuDB team. 
+Additionally, a minor adjustment is needed to prevent the creation of duplicate edges in the synthetic data. To avoid impacting the progress of KuzuDB and its team, the repository is archived, though it may still provide useful insights. Feel free to explore and use it, keeping in mind that the repo is now in an archived state.
 
+This repository facilitates test data generation and bulk loading into KuzuDB, enabling users to compare different database versions and diagnose errors, such as a known bulk loading issue between two KuzuDB versions. The test data includes dynamically generated Company Nodes, Person Nodes, and WorksAt Relationships based on user configurations.
 # Project Overview
 
 This repository is designed to facilitate the creation and loading of test data into KuzuDB, highlighting the flexibility and ease of managing data across different database versions. It offers a comprehensive setup for generating test data and a simplistic model tailored for bulk loading into various versions of KuzuDB within isolated virtual environments. Additionally, this setup aims to replicate and analyze a known bulk loading error that occurs between two specified versions of KuzuDB, providing insights and potential workarounds for such issues.
